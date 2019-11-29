@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.use('/', indexRouter)
+app.use('/api', indexRouter)
 app.use('/users', usersRouter)
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -44,10 +44,10 @@ app.use(function (err, req, res, next) {
   res.render('error')
 })
 
-// 开发模式 使用
+// 开发模式 使用supervisor
 // eslint-disable-next-line no-unused-vars
 var debug = require('debug')('my-application') // debug模块
-app.set('port', process.env.PORT || 8081) // 设定监听端口
+app.set('port', process.env.PORT || 3000) // 设定监听端口
 // 启动监听
 var server = app.listen(app.get('port'), function () {
   console.log('Express server listening on port ' + server.address().port)

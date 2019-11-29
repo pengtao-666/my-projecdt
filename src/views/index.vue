@@ -10,7 +10,7 @@ export default {
     return {
     }
   },
-  created () {
+  mounted () {
     if (!sessionStorage.getItem('userInfo') && this.$route.path !== '/login') {
       this.$router.push({
         path: '/login'

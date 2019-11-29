@@ -6,8 +6,12 @@ var user = require('../modules/handle')
 router.get('/', function (req, res, next) {
   res.render('index', { title: 'Express' })
 })
-router.post('/login', function (req, res, next) {
+router.use('/login', function (req, res, next) {
   user.login(req, res, next)
+  // res.render('index', { title: 'Express' })
+})
+router.get('/userList', function (req, res, next) {
+  user.userList(req, res, next)
   // res.render('index', { title: 'Express' })
 })
 module.exports = router
