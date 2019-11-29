@@ -13,7 +13,7 @@ app.all('*', function (req, res, next) {
   // Access-Control-Allow-Headers ,可根据浏览器的F12查看,把对应的粘贴在这里就行
   res.header('Access-Control-Allow-Headers', 'Content-Type')
   res.header('Access-Control-Allow-Methods', '*')
-  res.header('Content-Type', 'application/json;charset=utf-8')
+  // res.header('Content-Type', 'application/json;charset=utf-8')
   next()
 })
 // view engine setup
@@ -24,7 +24,7 @@ app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
-app.use(express.static(path.join(__dirname, 'public')))
+app.use('/static',express.static(path.join(__dirname,'public')))
 
 app.use('/api', indexRouter)
 app.use('/users', usersRouter)
@@ -45,7 +45,6 @@ app.use(function (err, req, res, next) {
 })
 
 // 开发模式 使用supervisor
-// eslint-disable-next-line no-unused-vars
 var debug = require('debug')('my-application') // debug模块
 app.set('port', process.env.PORT || 3000) // 设定监听端口
 // 启动监听

@@ -30,7 +30,6 @@ export default {
   },
   methods: {
     rowClick (row, event, column) {
-      console.log(row)
     },
     getList () {
       apiuserList().then(res => {

@@ -1,9 +1,10 @@
 import axios from 'axios'
 import qs from 'qs'
-
+import baseUrl from './baseUrl'
 const Axios = axios.create({
   // baseURL: 'http://www.pt66.xyz/api/',
-  baseURL: 'http://localhost:3000/api/',
+  // baseURL: 'http://localhost:3000/api/',
+  baseURL: baseUrl,
   timeout: 10000
 })
 // post 传参序列化（添加请求拦截器）
