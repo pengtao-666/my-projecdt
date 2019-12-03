@@ -48,14 +48,20 @@ export default {
 }
 .menu-item{
   cursor: pointer;
-  height: 50px;
-  margin-top: 10px;
-  &:last-child{
-    margin-bottom: 10px;
-  }
+  width: 60px;
+  height: 65px;
+  position: relative;
   img{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
     @include contSize(50px,50px);
     border-radius: 12px;
+    transition: .3s;
+    &:hover{
+      @include contSize(60px,60px);
+    }
   }
 }
 </style>

@@ -45,9 +45,9 @@ app.use(function (err, req, res, next) {
 // 开发模式 使用supervisor
 var debug = require('debug')('my-application') // debug模块
 app.set('port', process.env.PORT || 3000) // 设定监听端口
-// 启动监听
+// // 启动监听
 var server = app.listen(app.get('port'), function () {
   console.log('Express server listening on port ' + server.address().port)
 })
 // module.exports = app; 这是 4.x 默认的配置，分离了 app 模块,将它注释即可，上线时可以重新改回来
-// module.exports = app;
+// module.exports = app

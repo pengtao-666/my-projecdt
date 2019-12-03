@@ -7,23 +7,34 @@
             <p>{{currentDate}}</p>
           </div>
         </el-col>
+        <el-col :lg="8">
+          <div class="remind">
+            <h4>事件提醒</h4>
+            <div>
+              <a>1.这是一段很长很长的提醒这是一段很长很长的提醒</a>
+              <a>2.这是一段很长很长的提醒</a>
+            </div>
+          </div>
+        </el-col>
         <el-col :lg="12">
           <div class="weather">
             <div class="left">
-              <div>
-                <p>{{city}}</p>
+            <h3>{{city}}</h3>
+              <div class="between">
+                <div>
                 <p>体感温度：{{weather.fl}}℃</p>
                 <p>实测温度：{{weather.tmp}}℃</p>
               </div>
               <div>
-                <p>风向：{{weather.wind_dir}}</p>
                 <p>风力：{{weather.wind_sc}}</p>
+                <p>风向：{{weather.wind_dir}}</p>
                 <p>风速：{{weather.wind_spd}}km/小时</p>
               </div>
               <div>
                 <p>云量：{{weather.cloud}}</p>
                 <p>降水量：{{weather.pcpn}}</p>
                 <p>能见度：{{weather.vis}}</p>
+              </div>
               </div>
             </div>
             <div class="right">
@@ -34,6 +45,26 @@
               <img :src="weatherImg" alt="天气">
             </div>
           </div>
+        </el-col>
+        <el-col :lg="10">
+          <el-row>
+            <el-col :lg="12" style="padding-right:20px">
+              <div class="article"></div>
+            </el-col>
+            <el-col :lg="12">
+              <el-col><div class="articles"></div></el-col>
+              <el-col><div class="articles"></div></el-col>
+            </el-col>
+          </el-row>
+        </el-col>
+        <el-col :lg="14">
+          <el-row :gutter="10">
+            <el-col :lg="24"><div class="div2"></div></el-col>
+            <el-col :lg="6"><div class="div1"></div></el-col>
+            <el-col :lg="6"><div class="div1"></div></el-col>
+            <el-col :lg="6"><div class="div1"></div></el-col>
+            <el-col :lg="6"><div class="div1"></div></el-col>
+          </el-row>
         </el-col>
       </el-row>
     </div>
@@ -84,12 +115,21 @@ export default {
   .home{
     padding: 100px;
   }
+  .el-col{
+    margin-bottom: 20px;
+  }
   @mixin cont_style($h:120px){
     width: 100%;
     height: $h;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
     border-radius: 6px;
     display: flex;
+    color: #333;
+    background: rgba(255, 255, 255, 0.5);
+    transition: .3s;
+    &:hover{
+      transform: scale(1.05);
+    }
   }
   .clock-main{
     @include cont_style();
@@ -99,17 +139,37 @@ export default {
       text-align: center;
       display: block;
       font-size: 28px;
-      color: #fff;
       font-weight: bold;
       &:last-child{
         font-size: 18px;
       }
     }
   }
+  .remind{
+    @include cont_style;
+    flex-direction: column;
+    padding: 10px;
+    font-size: 20px;
+    font-weight: normal;
+    div{
+      padding: 0 10px;
+    }
+    a{
+      font-size: 18px;
+      display: block;
+      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      height: 36px;
+      &:hover{
+        text-decoration:underline;
+      }
+    }
+  }
   .weather{
     @include cont_style();
     justify-content: space-between;
-    color: #fff;
     @mixin public_style($w,$fz){
       display: flex;
       justify-content: space-between;
@@ -118,13 +178,32 @@ export default {
       padding: 5px;
     }
     .left{
-      @include public_style(75%,18px);
+      width: 70%;
+      padding: 5px;
+      .between{
+      @include public_style(100%,18px);
+      p{height: 28px;}
+      }
     }
     .right{
       @include public_style(25%,38px);
       align-items: flex-end;
       background: rgba(255, 255, 255, 0.295);
       border-radius: 6px;
+      color: #409EFF;
+      p{text-align: center;}
     }
+  }
+  .article{
+    @include cont_style(280px);
+  }
+  .articles{
+    @include cont_style(130px);
+  }
+  .div1{
+    @include cont_style(130px);
+  }
+  .div2{
+    @include cont_style(130px);
   }
 </style>
