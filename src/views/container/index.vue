@@ -1,28 +1,31 @@
 <template>
    <div class="container">
-      <div class="left-cont" :class="zoom?'active':''">
-        <menu-circle />
-      </div>
-      <div class="right-cont" :class="zoom?'active':''">
+     <div class="right-cont">
         <router-view />
       </div>
-        <!-- <p>id:{{userInfo.id}}</p> -->
-        <!-- <p>账号:{{userInfo.loginNum}}</p> -->
-        <!-- <p>密码:{{userInfo.password}}</p> -->
-        <!-- <p>用户名:{{userInfo.userName}}</p> -->
+      <div class="left-cont">
+        <menu-Vertical :catalogList="catalogList" />
+      </div>
+
    </div>
 </template>
 
 <script>
-import menuCircle from 'com/menuCircle'
+import menuVertical from 'com/menuVertical'
 export default {
   components: {
-    menuCircle
+    menuVertical
   },
   data () {
     return {
-      zoom: false,
-      userInfo: {}
+      userInfo: {},
+      catalogList: [
+        { title: '主页', path: '/' },
+        { title: '用户列表', path: '/userList' },
+        { title: '相册', path: '/album' },
+        { title: '标题四', path: '/userList' },
+        { title: '注销', path: '/login' }
+      ]
     }
   },
   beforeCreate () {
@@ -48,31 +51,40 @@ export default {
   .container{
     width: 100%;
     height: 100vh;
-    background-color: #232323;
+    background: url("../../assets/img/bg.jpg") 0 / cover fixed;
+    overflow: hidden;
+    @include flex_align(space-between,center);
     @mixin contStyle{
       display: inline-block;
-      transition: .3s;
       height: 100%;
     }
     // 最左侧容器
     .left-cont{
       @include contStyle;
-      left: 0;
-      position: fixed;
-      &:hover{
-        z-index: 999;
+      @include contSize(85px,auto);
+      min-height: 50%;
+      max-height: 80%;
+      position: relative;
+      overflow:hidden;
+      overflow-y: auto;
+      border-top-right-radius: 6px;
+      border-bottom-right-radius: 6px;
+      z-index: 1;
+      box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);
+      &::before{
+        content: '';
+        position: absolute;
+        top:0;right:0;bottom:0;left:0;
+        z-index: -1;
+        background: url("../../assets/img/bg.jpg") 0 / cover fixed;
+        filter: blur(5px);
+        margin:0 -10px;
       }
     }
     .right-cont{
       @include contStyle;
       overflow: auto;
-      width:100%;
-      padding: 40px;
-      &.active{
-        width:calc(100% - 20px);
-      }
-      // background-image: url('../../assets/img/bg.png');
-      background-size: 100% 100%;
+      width:calc(100% - 85px);
     }
   }
 </style>

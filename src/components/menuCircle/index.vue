@@ -29,6 +29,7 @@ export default {
     jump (val) {
       if (val === '/login') {
         sessionStorage.removeItem('userInfo')
+        this.$router.push({ path: val })
       } else if (this.$route.path !== val) {
         this.$router.push({
           path: val

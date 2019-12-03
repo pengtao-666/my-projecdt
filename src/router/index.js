@@ -13,7 +13,11 @@ const routes = [
         component: r => require.ensure([], () => r(require('../views/container/index.vue'))),
         children: [
           {
-            path: '/user',
+            path: '/',
+            component: r => require.ensure([], () => r(require('../views/container/home/index.vue')))
+          },
+          {
+            path: '/userList',
             component: r => require.ensure([], () => r(require('../views/container/user/list.vue')))
           },
           {

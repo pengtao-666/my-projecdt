@@ -1,22 +1,26 @@
 <template>
   <div class="container">
     <canvas ref="stars" id="stars"></canvas>
-    <el-form v-model="form" label-width="auto" class="login-wrap-form">
-      <el-form-item label="账号">
-        <el-input v-model="form.loginNum" placeholder="请输入账号"></el-input>
-      </el-form-item>
-      <el-form-item label="密码">
-        <el-input v-model="form.password" type="password" placeholder="请输入密码"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="are_you_ok">登录</el-button>
-        <el-button type="warning" @click="region">注册</el-button>
-      </el-form-item>
-    </el-form>
+    <el-row class="fixed">
+      <el-col :xs="20" :sm="12" :md="10" :lg="5">
+        <el-form v-model="form" label-width="auto" class="login-wrap-form">
+          <el-form-item label="账号">
+            <el-input v-model="form.loginNum" placeholder="请输入账号"></el-input>
+          </el-form-item>
+          <el-form-item label="密码">
+            <el-input v-model="form.password" type="password" placeholder="请输入密码"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="are_you_ok">登录</el-button>
+            <el-button type="warning" @click="region">注册</el-button>
+          </el-form-item>
+        </el-form>
+      </el-col>
+    </el-row>
   </div>
 </template>
 <script>
-import { apiLogin } from '../../api/index'
+import { apiLogin, apiRegister } from '../../api/index'
 export default {
   data () {
     return {
@@ -28,7 +32,9 @@ export default {
       arr: [],
       starCount: 600,
       rains: [],
-      rainCount: 40
+      rainCount: 40,
+      stars: '',
+      rain: ''
     }
   },
   mounted () {
@@ -47,10 +53,10 @@ export default {
       rain.draw()
       this.rains.push(rain)
     }
-    setInterval(() => {
+    this.stars = setInterval(() => {
       this.playStars() // 绘制闪动的星星
     }, 300)
-    setInterval(() => {
+    this.rain = setInterval(() => {
       this.playRains() // 绘制流星
     }, 5)
   },
@@ -58,6 +64,8 @@ export default {
     are_you_ok () {
       apiLogin(this.form).then(res => {
         if (res.msg === '成功') {
+          clearInterval(this.stars)
+          clearInterval(this.rain)
           sessionStorage.setItem('userInfo', JSON.stringify(res.data))
           this.$router.push({
             path: '/'
@@ -66,9 +74,11 @@ export default {
       })
     },
     region () {
-      this.$message({
-        message: '暂未开放',
-        type: 'success'
+      apiRegister(this.form).then(res => {
+        this.$message({
+          message: res.msg,
+          type: 'success'
+        })
       })
     },
     //   初始化画布及context
@@ -241,17 +251,22 @@ export default {
   height: 100vh;
   background: #000;
 }
+.fixed{
+  position: fixed;
+  width: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+}
 .login-wrap-form {
-  width: 20%;
+  width: 100%;
   padding: 40px 20px 20px;
   background: #fff;
   box-shadow: 0 0 30px #437bf1;
   border-radius: 6px;
-  z-index: 999;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   .el-form-item:last-child {
     display: flex;
     justify-content: center;
