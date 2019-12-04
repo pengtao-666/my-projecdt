@@ -186,12 +186,19 @@ export default {
       }
     }
     .right{
-      @include public_style(25%,38px);
+      @include public_style(25%,25px);
       align-items: flex-end;
       background: rgba(255, 255, 255, 0.295);
       border-radius: 6px;
       color: #409EFF;
-      p{text-align: center;}
+      div{
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+      }
+      p{text-align: center}
     }
   }
   .article{
