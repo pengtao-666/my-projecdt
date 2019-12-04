@@ -5,7 +5,7 @@
       <el-col :xs="20" :sm="12" :md="10" :lg="5">
         <el-form v-model="form" label-width="auto" class="login-wrap-form">
           <el-form-item label="账号">
-            <el-input v-model="form.loginNum" placeholder="请输入账号"></el-input>
+            <el-input v-model="form.userName" placeholder="请输入账号"></el-input>
           </el-form-item>
           <el-form-item label="密码">
             <el-input v-model="form.password" type="password" placeholder="请输入密码"></el-input>
@@ -25,7 +25,7 @@ export default {
   data () {
     return {
       form: {
-        loginNum: 'admin',
+        userName: 'admin',
         password: 'admin'
       },
       context: null,

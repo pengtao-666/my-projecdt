@@ -1,14 +1,15 @@
+const qs = require('qs')
 module.exports = {
-  format(req) {
-    let query;
+  format (req) {
+    let query
     switch (req.method) {
       case 'GET':
-        query = req.query;
-        break;
+        query = req.query
+        break
       case 'POST':
-        query = req.body;
-        break;
+        query = req.body
+        break
     }
-    return query
+    return qs.parse(query)
   }
 }
