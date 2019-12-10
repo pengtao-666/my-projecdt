@@ -11,5 +11,8 @@
 }
 .templateCont{
   padding: 20px;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  overflow: auto;
 }
 </style>

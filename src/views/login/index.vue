@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-loading="loading">
     <canvas ref="stars" id="stars"></canvas>
     <el-row class="fixed">
       <el-col :xs="20" :sm="12" :md="10" :lg="5">
@@ -24,6 +24,7 @@ import { apiLogin, apiRegister } from '../../api/index'
 export default {
   data () {
     return {
+      loading: false,
       form: {
         userName: 'admin',
         password: 'admin'
@@ -62,15 +63,26 @@ export default {
   },
   methods: {
     are_you_ok () {
+      this.loading = true
       apiLogin(this.form).then(res => {
-        if (res.msg === '成功') {
+        this.loading = false
+        if (res.msg === '登录成功') {
           clearInterval(this.stars)
           clearInterval(this.rain)
           sessionStorage.setItem('userInfo', JSON.stringify(res.data))
           this.$router.push({
             path: '/'
           })
+          this.$message({
+            message: `欢迎 ${res.data.userName} 回来`,
+            type: 'success'
+          })
+          return
         }
+        this.$message({
+          message: res.msg,
+          type: 'warning'
+        })
       })
     },
     region () {

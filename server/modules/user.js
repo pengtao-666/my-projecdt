@@ -10,52 +10,64 @@ var userData = {
   // 注册
   register: async (req, res, next) => {
     let query = await utils.format(req)
-    let token = jwt.sign(query, SECRET)
-    poolextend('SELECT userName FROM userList WHERE userName=?', [query.userName])
-      .then(result => {
-        if (result.length > 0) {
-          json(res, result, '账号重复', 201)
-        } else {
-          let sql = 'INSERT INTO userList(userName,name,password,uid) VALUES(?,?,?,?)'
-          poolextend(sql, [query.userName, query.name, query.password, token])
-            .then(result => {
-              json(res, {}, '成功')
-            })
-            .catch(err => {
-              json(res, err, '注册失败')
-            })
-        }
-      })
+    let uid = jwt.sign(query, SECRET)
+    if (!query.userName) {
+      return json(res, null, '账号不能为空', 201)
+    }
+    let [userInfo] = await poolextend('SELECT userName FROM userList WHERE userName=?', [query.userName])
+    if (userInfo) {
+      json(res, null, '账号重复', 201)
+    } else {
+      let sql = 'INSERT INTO userList(userName,name,password,uid) VALUES(?,?,?,?)'
+      poolextend(sql, [query.userName, query.name, query.password, uid])
+        .then(result => {
+          json(res, {}, '成功')
+        })
+        .catch(err => {
+          json(res, err, '注册失败')
+        })
+    }
   },
   // 登录
   login: async (req, res, next) => {
     let query = await utils.format(req)
-    poolextend('SELECT userName,password,uid FROM userList WHERE userName=? AND password=?', [query.userName, query.password])
-      .then(result => {
-        let msg = '成功'
-        if (result.length === 1) {
-          result = result[0]
-        } else if (result.length === 0) {
-          msg = '登录名或密码错误'
-        }
-        json(res, result, msg)
-      })
-      .catch(err => {
-        json(res, err, '登录失败')
-      })
+    let sql = 'SELECT userName,status,password,uid FROM userList WHERE userName=? AND password=?'
+    let sqlArr = [query.userName, query.password]
+    try {
+      let [data] = await poolextend(sql, sqlArr)
+      let msg = '登录成功'
+      if (!data) msg = '登录名或密码错误'
+      json(res, data, msg)
+    } catch (err) {
+      json(res, err, '登录失败')
+    }
   },
   // 更改
   updateUser: async (req, res, next) => {
     let query = await utils.format(req)
-    let sql = 'UPDATE userList SET name=?,userName=?,password=? WHERE id=?'
-    poolextend(sql, [query.name, query.userName, query.password, query.id])
+    let sql = ''
+    let arr = []
+    if (query.password != null) {
+      if (query.password === '') {
+        return json(res, {}, '密码不能为空', 201)
+      }
+      sql = 'UPDATE userList SET name=?,password=? WHERE id=?'
+      arr = [query.name, query.password, query.id]
+    } else {
+      sql = 'UPDATE userList SET name=? WHERE id=?'
+      arr = [query.name, query.id]
+    }
+    poolextend(sql, arr)
       .then(result => {
         json(res, result, '成功')
+      })
+      .catch(err => {
+        json(res, err, '修改失败', 201)
       })
   },
   // 用户列表
   userList: (req, res, next) => {
-    poolextend('SELECT id,userName,name,password,createDate FROM userList')
+    poolextend('SELECT id,userName,name,status,createDate FROM userList')
       .then(result => {
         let msg = '成功'
         json(res, result, msg)
@@ -66,15 +78,19 @@ var userData = {
   },
   // 删除
   delete: async (req, res, next) => {
-    json(res, {}, '无删除权限', 201)
     let query = await utils.format(req)
-    // poolextend(`DELETE FROM userList WHERE id in (${query.ids})`)
-    //   .then(result => {
-    //     json(res, result, '成功')
-    //   })
-    //   .catch(err => {
-    //     json(res, err, '删除失败')
-    //   })
+    let [data] = await poolextend('SELECT status FROM userList WHERE uid=?', [query.uid])
+    if (data.status !== 1) {
+      json(res, {}, '权限不足', 201)
+      return
+    }
+    poolextend(`DELETE FROM userList WHERE id in (${query.ids})`)
+      .then(result => {
+        json(res, result, '成功')
+      })
+      .catch(err => {
+        json(res, err, '删除失败')
+      })
   }
 }
 module.exports = userData

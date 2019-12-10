@@ -49,21 +49,24 @@
         <el-col :lg="10">
           <el-row>
             <el-col :lg="12" style="padding-right:20px">
-              <div class="article"></div>
+              <div class="article journal" @click="jump('/article')">
+                <p>所有日志</p>
+                <p>99</p>
+              </div>
             </el-col>
             <el-col :lg="12">
-              <el-col><div class="articles"></div></el-col>
-              <el-col><div class="articles"></div></el-col>
+              <el-col><div class="articles"><p>技术分享</p><p>99</p></div></el-col>
+              <el-col><div class="articles"><p>生活感悟</p><p>99</p></div></el-col>
             </el-col>
           </el-row>
         </el-col>
         <el-col :lg="14">
           <el-row :gutter="10">
-            <el-col :lg="24"><div class="div2"></div></el-col>
-            <el-col :lg="6"><div class="div1"></div></el-col>
-            <el-col :lg="6"><div class="div1"></div></el-col>
-            <el-col :lg="6"><div class="div1"></div></el-col>
-            <el-col :lg="6"><div class="div1"></div></el-col>
+            <el-col :lg="24"><div class="div2"><p>推荐日志</p></div></el-col>
+            <el-col :lg="6"><div class="div1"><p>旅行足迹</p><p>99</p></div></el-col>
+            <el-col :lg="6"><div class="div1"><p></p></div></el-col>
+            <el-col :lg="6"><div class="div1"  @click="jump('/article/publish')"><p>发布日志</p></div></el-col>
+            <el-col :lg="6"><div class="div1"><p>添加提醒</p></div></el-col>
           </el-row>
         </el-col>
       </el-row>
@@ -94,11 +97,20 @@ export default {
           this.city = res.data.HeWeather6[0].basic.location
           this.weather = res.data.HeWeather6[0].now
           if (this.currentTiem > '18:00:00') {
-            this.weatherImg = require(`@/assets/cond-icon-heweather/${this.weather.cond_code}n.png`)
+            try {
+              this.weatherImg = require(`@/assets/cond-icon-heweather/${this.weather.cond_code}n.png`)
+            } catch {
+              this.weatherImg = require(`@/assets/cond-icon-heweather/${this.weather.cond_code}.png`)
+            }
           } else {
             this.weatherImg = require(`@/assets/cond-icon-heweather/${this.weather.cond_code}.png`)
           }
         })
+    },
+    jump (url) {
+      this.$router.push({
+        path: url
+      })
     },
     // 时间
     getCurrentTime () {
@@ -201,7 +213,22 @@ export default {
       p{text-align: center}
     }
   }
+  .journal{
+    flex-direction: column;
+    justify-content: center;
+    p{
+      text-align: center;
+      display: block;
+      font-weight: bold;
+      width: 100%;
+      font-size: 38px;
+      &:first-child{
+        font-size: 18px;
+      }
+    }
+  }
   .article{
+    cursor: pointer;
     @include cont_style(280px);
   }
   .articles{

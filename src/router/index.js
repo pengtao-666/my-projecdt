@@ -23,6 +23,24 @@ const routes = [
           {
             path: '/album',
             component: r => require.ensure([], () => r(require('../views/container/album/index.vue')))
+          },
+          {
+            path: '/article',
+            component: r => require.ensure([], () => r(require('../views/container/article/index.vue'))),
+            children: [
+              {
+                path: '/article',
+                component: r => require.ensure([], () => r(require('../views/container/article/children/list.vue')))
+              },
+              {
+                path: '/article/details',
+                component: r => require.ensure([], () => r(require('../views/container/article/children/details.vue')))
+              }
+            ]
+          },
+          {
+            path: '/article/publish',
+            component: r => require.ensure([], () => r(require('../views/container/article/publish.vue')))
           }
         ]
       },

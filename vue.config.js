@@ -1,6 +1,7 @@
 const path = require('path')
 const isProduction = process.env.NODE_ENV !== 'development'
 const devNeedCdn = false
+const webpack = require('webpack')
 // 代码压缩
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 // gzip压缩
@@ -47,6 +48,9 @@ module.exports = {
       if (isProduction || devNeedCdn) args[0].cdn = cdn
       return args
     })
+    config.plugin('provide').use(webpack.ProvidePlugin, [{
+      'window.Quill': 'quill'
+    }])
   },
   configureWebpack: config => {
     if (isProduction || devNeedCdn) config.externals = cdn.externals

@@ -23,7 +23,7 @@ export default {
         { title: '主页', path: '/' },
         { title: '用户列表', path: '/userList' },
         { title: '相册', path: '/album' },
-        { title: '标题四', path: '/userList' },
+        { title: '账号管理', path: '/userList' },
         { title: '注销', path: '/login' }
       ]
     }
