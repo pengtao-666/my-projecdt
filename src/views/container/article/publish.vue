@@ -75,7 +75,11 @@ export default {
   },
   methods: {
     handleAvatarSuccess (res, file) {
-      this.submitQuery.src = `http://localhost:3000/${res.data}`
+      if (process.env.NODE_ENV === 'production') {
+        this.submitQuery.src = `http://118.24.125.76:3000/${res.data}`
+      } else {
+        this.submitQuery.src = `http://localhost:3000/${res.data}`
+      }
     },
     beforeAvatarUpload (file) {
       const isJPG = file.type === 'image/jpeg'
