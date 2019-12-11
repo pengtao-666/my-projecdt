@@ -101,6 +101,9 @@ export default {
       this.quillUpdateImg = true
     },
     uploadSuccess (res, file) {
+      if (process.env.NODE_ENV === 'production') {
+        this.imageBaseUrl = `http://118.24.125.76:3000/`
+      }
       // res为图片服务器返回的数据
       // 获取富文本组件实例
       let quill = this.$refs.myQuillEditor.quill
