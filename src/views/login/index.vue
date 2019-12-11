@@ -66,7 +66,7 @@ export default {
       this.loading = true
       apiLogin(this.form).then(res => {
         this.loading = false
-        if (res.msg === '登录成功') {
+        if (res.code === 200) {
           clearInterval(this.stars)
           clearInterval(this.rain)
           sessionStorage.setItem('userInfo', JSON.stringify(res.data))
