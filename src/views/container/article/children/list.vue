@@ -46,6 +46,8 @@ export default {
 
 <style lang="scss" scoped>
 .container {
+  height: calc(100% - 96px);
+  overflow: auto;
   cursor: pointer;
   @mixin between {
     display: flex;

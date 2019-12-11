@@ -3,6 +3,7 @@ var mysql = {
   user: 'pengtao',
   password: 'PengTao0206!',
   database: 'my_project',
-  port: 3306
+  port: 3306,
+  charset: 'UTF8MB4_GENERAL_CI'
 }
 module.exports = mysql

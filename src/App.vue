@@ -10,6 +10,7 @@
   box-sizing: border-box;
 }
 .templateCont{
+  height: 100%;
   padding: 20px;
   border-top-right-radius: 6px;
   border-bottom-right-radius: 6px;

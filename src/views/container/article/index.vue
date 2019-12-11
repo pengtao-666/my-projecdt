@@ -5,8 +5,8 @@
         <p @click="categoryChange(item.id)" v-for="(item,index) in categoryArr" :key="index" :class="categoryType==item.id?'active':''">{{item.categoryName}}</p>
       </el-col>
       <el-col :span="5">
-        <el-input clearable placeholder="请输入搜索内容" v-model="title" class="input-with-select">
-          <el-button @click="search" slot="append" icon="el-icon-search"></el-button>
+        <el-input clearable placeholder="请输入搜索内容" v-model="listQuery.title" class="input-with-select">
+          <el-button @click="getArtcleList" slot="append" icon="el-icon-search"></el-button>
         </el-input>
       </el-col>
       <el-col :span="3">
@@ -14,14 +14,20 @@
       </el-col>
     </el-row>
     <el-row class="cont">
-      <el-col :span="18" class="left_list">
+      <el-col :span="18" class="left_list" >
         <router-view v-loading="listLoading" :artcleList="artcleList" />
+          <pagination
+          v-show="tableTotal>0 && $route.path == '/article'"
+          :total="tableTotal"
+          :page.sync="listQuery.page"
+          :limit.sync="listQuery.pageSize"
+          @pagination="getArtcleList" />
         <p v-if="artcleList.length<1" style="text-align:center;margin-top:20px;">暂无数据~</p>
       </el-col>
       <el-col :span="6" class="right_label">
         <h4>常用标签</h4>
         <div class="label-cont">
-          <p class="label-text" v-for="item in subclassArr" :key="item.id" @click='categoryChange(item.categoryId,item.id)'>{{item.subclassName}}</p>
+          <p class="label-text" :class="listQuery.subclassId==item.id?'active':''" v-for="item in subclassArr" :key="item.id" @click='categoryChange(categoryType,item.id)'>{{item.subclassName}}</p>
         </div>
       </el-col>
     </el-row>
@@ -30,25 +36,32 @@
 
 <script>
 import { getCategory, getArtcle, searchArtcle } from '@/api/article'
+import pagination from '@/components/pagination/index'
 export default {
+  components: {
+    pagination
+  },
   data () {
     return {
-      title: '',
       listLoading: false,
       categoryArr: [],
       categoryType: 0,
       subclassArr: [],
       artcleList: [],
-      categoryIds: {
+      listQuery: {
         categoryId: null,
-        subclassId: null
-      }
+        subclassId: null,
+        title: '',
+        page: 1,
+        pageSize: 10
+      },
+      tableTotal: 0
     }
   },
   mounted () {
     if (this.$store.getters.getCategoryId) {
       let id = Number(this.$store.getters.getCategoryId)
-      this.categoryIds.categoryId = id
+      this.listQuery.categoryId = id
       this.categoryType = id
     }
     this.getCategoryList({ type: 0 })
@@ -70,12 +83,13 @@ export default {
     },
     getArtcleList () {
       this.listLoading = true
-      if (this.categoryIds.categoryId === 0) {
-        this.categoryIds.categoryId = null
+      if (this.listQuery.categoryId === 0) {
+        this.listQuery.categoryId = null
       }
-      getArtcle(this.categoryIds).then(res => {
+      getArtcle(this.listQuery).then(res => {
         this.listLoading = false
-        this.artcleList = res.data
+        this.artcleList = res.data.list
+        this.tableTotal = res.data.total
       })
     },
     search () {
@@ -101,8 +115,9 @@ export default {
       }
       this.$store.commit('handleCategoryId', cid)
       this.categoryType = cid
-      this.categoryIds.categoryId = cid
-      this.categoryIds.subclassId = sid
+      this.listQuery.categoryId = cid
+      this.listQuery.subclassId = sid
+      this.listQuery.page = 1
       this.getArtcleList()
       this.getCategoryList({ type: 1, categoryId: this.categoryType })
     }
@@ -169,6 +184,10 @@ export default {
           color: #71777c;
           background: #f4f5f5;
           cursor: pointer;
+          &.active{
+            background: #007fff;
+            color: #fff;
+          }
         }
       }
     }

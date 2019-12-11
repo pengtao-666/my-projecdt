@@ -34,5 +34,9 @@ router.get('/get_artcleDetails', (req, res, next) => {
 router.get('/search_artcle', (req, res, next) => {
   apiArtcle.search_artcle(req, res, next)
 })
+// 删除文章
+router.post('/delete_article', (req, res, next) => {
+  apiArtcle.delete_article(req, res, next)
+})
 
 module.exports = router

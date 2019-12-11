@@ -30,6 +30,56 @@ var apiArtcle = {
       json(res, err.sqlMessage, '错误')
     }
   },
+
+  upload: async (req, res, next) => {
+    var form = new formidable.IncomingForm()
+    var uploadDir = 'public/fileUpload/'
+    form.uploadDir = uploadDir
+    form.keepExtensions = true // 保留拓展名
+    form.maxFieldsSize = 20 * 1024 * 1024 // 上传文件的最大大小
+    form.hash = 'md5'
+    form.parse(req, async (err, fields, files) => {
+      if (err) return json(req, err, '错误')
+      let [fileStatus] = await poolextend('SELECT url FROM file_hash WHERE hash=?', [files.file.hash])
+      if (fileStatus) {
+        fs.unlink(files.file.path, err => {
+          if (err) console.log('失败')
+        })
+        json(res, fileStatus.url, '成功')
+      } else {
+        await poolextend('INSERT INTO file_hash(hash,url) VALUES(?,?)', [files.file.hash, files.file.path])
+        json(res, files.file.path, '成功')
+      }
+    })
+  },
+  add_artcle: async (req, res, next) => {
+    const q = await utils.format(req)
+    try {
+      const sql = 'INSERT INTO article_cont (title,author,createDate,content,src,subclassId,categoryId) VALUES(?,?,?,?,?,?,?)'
+      await poolextend(sql, [q.title, q.author, q.createDate, q.content, q.src, q.subclassId, q.categoryId])
+      json(res, null, '添加成功')
+    } catch (err) {
+      json(res, err, '错误')
+    }
+  },
+  search_artcle: async (req, res, next) => {
+    const query = utils.format(req)
+    let sql = `SELECT *,cont.id FROM article_cont AS cont `
+    const cateJoin = 'LEFT JOIN article_category AS cate ON cont.categoryId=cate.id '
+    const subJoin = 'LEFT JOIN article_subclass AS sub ON cont.subclassId=sub.id '
+    sql += cateJoin + subJoin
+    sql += `WHERE title LIKE '%${query.title}%' ORDER BY cont.id DESC`
+    if (query.page) sql += ` LIMIT ${(query.page - 1) * query.pageSize},${query.pageSize}`
+    try {
+      let data = {}
+      let [total] = await poolextend(`SELECT COUNT(*) as total FROM article_cont WHERE title LIKE '%${query.title}%'`)
+      data.list = await poolextend(sql)
+      data.total = total.total
+      json(res, data, '成功')
+    } catch (err) {
+      json(res, err, '失败', 201)
+    }
+  },
   get_category: async (req, res, next) => {
     const query = await utils.format(req)
     let sql = 'SELECT * FROM article_category'
@@ -45,72 +95,24 @@ var apiArtcle = {
       json(res, err, '失败', 201)
     }
   },
-  upload: async (req, res, next) => {
-    var form = new formidable.IncomingForm()
-    var uploadDir = 'public/fileUpload/'
-    form.uploadDir = uploadDir
-    form.keepExtensions = true // 保留拓展名
-    form.maxFieldsSize = 20 * 1024 * 1024 // 上传文件的最大大小
-    form.hash = 'md5'
-    form.parse(req, async (err, fields, files) => {
-      if (err) return json(req, err, '错误')
-      let [fileStatus] = await poolextend('SELECT url FROM file_hash WHERE hash=?', [files.file.hash])
-      if (fileStatus) {
-        json(res, fileStatus.url, '成功')
-        fs.unlink(files.file.path, err => {
-          if (err) console.log('失败')
-        })
-      } else {
-        await poolextend('INSERT INTO file_hash(hash,url) VALUES(?,?)', [files.file.hash, files.file.path])
-        json(res, files.file.path, '成功')
-      }
-      // json(res, { hash: '6ae2beef9a6eacb038023d58eb6fd9e2', files }, '成功')
-    })
-  },
-  add_artcle: async (req, res, next) => {
-    const q = await utils.format(req)
-    try {
-      const sql = 'INSERT INTO article_cont (title,author,createDate,content,src,subclassId,categoryId) VALUES(?,?,?,?,?,?,?)'
-      await poolextend(sql, [q.title, q.author, q.createDate, q.content, q.src, q.subclassId, q.categoryId])
-      json(res, null, '添加成功')
-    } catch (err) {
-      json(res, err.sqlMessage, '错误')
-    }
-  },
-  search_artcle: async (req, res, next) => {
-    const query = utils.format(req)
-    let sql = `SELECT *,cont.id FROM article_cont AS cont `
-    const cateJoin = 'LEFT JOIN article_category AS cate ON cont.categoryId=cate.id '
-    const subJoin = 'LEFT JOIN article_subclass AS sub ON cont.subclassId=sub.id '
-    sql += cateJoin + subJoin
-    sql += `WHERE title LIKE '%${query.title}%' ORDER BY createDate DESC`
-    try {
-      let data = await poolextend(sql)
-      json(res, data, '成功')
-    } catch (err) {
-      json(res, err, '失败', 201)
-    }
-  },
   get_artcle: async (req, res, next) => {
     const query = await utils.format(req)
+    let where = ''
     let sql = `SELECT *,cont.id FROM article_cont AS cont `
     const cateJoin = 'LEFT JOIN article_category AS cate ON cont.categoryId=cate.id '
-    const subJoin = 'LEFT JOIN article_subclass AS sub ON cont.subclassId=sub.id '
+    const subJoin = 'LEFT JOIN article_subclass AS sub ON cont.subclassId=sub.id WHERE 1=1'
     sql += cateJoin + subJoin
-    let arr = []
-    if (query.categoryId && query.subclassId) {
-      arr = [query.categoryId, query.subclassId]
-      sql += 'WHERE cont.categoryId=? AND cont.subclassId=?'
-    } else if (query.categoryId) {
-      arr.push(query.categoryId)
-      sql += 'WHERE cont.categoryId=?'
-    } else if (query.subclassId) {
-      arr.push(query.subclassId)
-      sql += 'WHERE cont.subclassId=?'
-    }
-    sql += 'ORDER BY cont.id DESC'
+    if (query.categoryId) where += ` AND cont.categoryId=${query.categoryId}`
+    if (query.subclassId) where += ` AND cont.subclassId=${query.subclassId}`
+    if (query.title) where += ` AND cont.title LIKE '%${query.title}%'`
+    sql += where
+    sql += ' ORDER BY cont.id DESC'
+    if (query.page) sql += ` LIMIT ${(query.page - 1) * query.pageSize},${query.pageSize}`
     try {
-      let data = await poolextend(sql, arr)
+      let data = {}
+      let [total] = await poolextend(`SELECT COUNT(cont.id) as total FROM article_cont as cont WHERE 1 ${where}`)
+      data.list = await poolextend(sql)
+      data.total = total.total
       json(res, data, '成功')
     } catch (err) {
       json(res, err, '失败', 201)
@@ -118,11 +120,22 @@ var apiArtcle = {
   },
   get_artcleDetails: async (req, res, next) => {
     const query = utils.format(req)
+    const cateJoin = 'LEFT JOIN article_category AS cate ON cont.categoryId=cate.id '
+    const subJoin = 'LEFT JOIN article_subclass AS sub ON cont.subclassId=sub.id'
     try {
-      let [data] = await poolextend('SELECT * FROM article_cont WHERE id=?', [query.id])
+      let [data] = await poolextend(`SELECT *,cont.id FROM article_cont AS cont ${cateJoin} ${subJoin} WHERE cont.id=${query.id}`)
       json(res, data, '成功')
     } catch (err) {
       json(res, err, '错误', 201)
+    }
+  },
+  delete_article: async (req, res, next) => {
+    const query = utils.format(req)
+    try {
+      await poolextend(`delete from article_cont where id=${query.id}`)
+      json(res, {}, '成功')
+    } catch (err) {
+      json(res, err, '失败', 201)
     }
   }
 }

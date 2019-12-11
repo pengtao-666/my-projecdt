@@ -71,7 +71,6 @@ export default {
     selectionChange (e) {
       this.ids = []
       e.forEach(item => { this.ids.push(item.id) })
-      console.log(this.ids)
     },
     // 添加/修改
     addUser () {

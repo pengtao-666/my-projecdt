@@ -1,6 +1,6 @@
 <template>
 <div class="container">
-  <el-page-header @back="goBack" :content="artcleInfo.title">
+  <el-page-header @back="goBack" :content="artcleInfo.categoryName+'-'+artcleInfo.subclassName">
   </el-page-header>
   <div class="ql-container ql-snow">
     <div class="head">
@@ -45,6 +45,7 @@ export default {
     border: 0;
   }
   .head{
+    margin-top: 20px;
     h1{
       text-align: center;
       color: #333;

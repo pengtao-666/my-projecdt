@@ -21,7 +21,7 @@ export default {
       userInfo: {},
       catalogList: [
         { title: '主页', path: '/' },
-        { title: '用户列表', path: '/userList' },
+        { title: '文章管理', path: '/article/manage' },
         { title: '相册', path: '/album' },
         { title: '账号管理', path: '/userList' },
         { title: '注销', path: '/login' }

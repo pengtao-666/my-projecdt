@@ -41,6 +41,10 @@ const routes = [
           {
             path: '/article/publish',
             component: r => require.ensure([], () => r(require('../views/container/article/publish.vue')))
+          },
+          {
+            path: '/article/manage',
+            component: r => require.ensure([], () => r(require('../views/container/article/manage.vue')))
           }
         ]
       },

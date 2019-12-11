@@ -11,3 +11,5 @@ export const searchArtcle = params => api.fetchGet('article/search_artcle', para
 export const addSubclass = params => api.fetchPost('article/add_subclass', params)
 // 发布文章
 export const addArtcle = params => api.fetchPost('article/add_artcle', params)
+// 删除文章
+export const deleteArticle = params => api.fetchPost('article/delete_article', params)
