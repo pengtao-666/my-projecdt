@@ -46,7 +46,7 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  height: calc(100% - 96px);
+  max-height: calc(100% - 96px);
   overflow: auto;
   cursor: pointer;
   @mixin between {

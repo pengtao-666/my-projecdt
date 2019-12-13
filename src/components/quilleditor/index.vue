@@ -57,7 +57,7 @@ export default {
   },
   data () {
     return {
-      content: this.value,
+      content: '',
       quillUpdateImg: false, // 根据图片上传状态来确定是否显示loading动画，刚开始是false,不显示
       editorOption: {
         theme: 'snow', // or 'bubble'
@@ -83,6 +83,9 @@ export default {
       serverUrl: `${baseUrl}article/upload`, // 上传的图片服务器地址
       imageBaseUrl: `http://localhost:3000/`
     }
+  },
+  mounted () {
+    this.content = this.value
   },
   methods: {
     onEditorBlur () {

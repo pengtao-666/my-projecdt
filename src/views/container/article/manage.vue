@@ -29,6 +29,7 @@
 import customTable from '@/components/customTable/index'
 import pagination from '@/components/pagination/index'
 import { getArtcle, deleteArticle, getCategory } from '@/api/article'
+import utils from '@/utils/index'
 export default {
   components: {
     customTable,
@@ -55,8 +56,9 @@ export default {
           fixed: 'right',
           scope: (row) => {
             return (<div>
-              {<el-button type='primary' plain onClick={() => this.see(row)}>查看</el-button>}
-              {<el-button type='danger' plain onClick={() => this.delete(row)}>删除</el-button>}</div>)
+              {<el-button type='primary' plain size="mini" onClick={() => this.see(row)}>查看</el-button>}
+              {<el-button type='primary' plain size="mini" onClick={() => this.edit(row)}>编辑</el-button>}
+              {<el-button type='danger' plain size="mini" onClick={() => this.delete(row)}>删除</el-button>}</div>)
           } }
       ],
       tableData: [],
@@ -84,10 +86,10 @@ export default {
       })
     },
     see (row) {
-      this.$router.push({
-        path: '/article/details',
-        query: { id: row.id }
-      })
+      utils.jump_query(this, '/article/details', { id: row.id })
+    },
+    edit (row) {
+      utils.jump_query(this, '/article/edit', { id: row.id })
     },
     delete (row) {
       deleteArticle({ id: row.id }).then(res => {

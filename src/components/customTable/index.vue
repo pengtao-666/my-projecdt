@@ -37,7 +37,7 @@ export default {
   props: {
     height: {
       type: [Number, String],
-      default: () => { return null }
+      default: () => { return 600 }
     },
     tableData: {
       type: Array,

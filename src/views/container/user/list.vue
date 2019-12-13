@@ -1,150 +1,139 @@
 <template>
   <div class="templateCont">
-    <div class="table-cont">
-      <div class="table-cont-head">
-        <el-button class="pop-add" type="primary" @click="dialogFormVisible = true">添加</el-button>
-        <h4 class="title">用户列表</h4>
-        <el-button class="pop-del" type="danger" @click="deleteUsers">删除</el-button>
-      </div>
-      <div class="table-cont-body">
-        <el-table v-loading="loading" @selection-change="selectionChange" :data="tableData" border style="width: 100%">
-          <el-table-column type="selection" width="100" align="center"></el-table-column>
-          <el-table-column prop="userName" label="账号" width align="center"></el-table-column>
-          <el-table-column prop="name" label="名称" width align="center"></el-table-column>
-          <el-table-column label="身份" width align="center">
-            <template slot-scope="scope">{{scope.row.status==1?'管理员':'用户'}}</template>
-          </el-table-column>
-          <el-table-column prop="createDate" label="更新时间" align="center"></el-table-column>
-          <el-table-column label="操作" align="center">
-            <template slot-scope="scope">
-              <el-button type="primary" @click="rowClick(scope.row)">编辑</el-button>
-              <el-button type="warning" @click="deleteUser(scope.row.id)">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-      <el-dialog @closed="dialogClose" :title="dialogLabel==1?'编辑账号':'添加账号'" width="500px" :visible.sync="dialogFormVisible">
-        <el-form :model="userInfo" label-width="60px">
-          <el-form-item label="用户名">
-            <el-input v-model="userInfo.name"></el-input>
-          </el-form-item>
-          <el-form-item v-if="dialogLabel==0" label="账号">
-            <el-input v-model="userInfo.userName"></el-input>
-          </el-form-item>
-          <el-form-item v-if="dialogLabel==0" label="密码">
-            <el-input v-model="userInfo.password" type="password"></el-input>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="addUser">确 定</el-button>
-        </div>
-      </el-dialog>
-    </div>
+    <el-row :gutter="20">
+      <el-col>
+        <el-col :span="17">
+          <el-button type="primary" @click="registerDialog = true">添加账号</el-button>
+        </el-col>
+        <el-col :span="5"><el-input v-model="listQuery.userName" clearable placeholder="请输入要搜索账号"></el-input></el-col>
+        <el-col :span="2"><el-button style="width:100%;" type="primary" icon="el-icon-search" @click="search">搜索</el-button></el-col>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col class="table">
+        <customTable v-loading="loading" :tableHead="tableHead" :tableData="tableData" :height="550" />
+        <pagination
+         v-show="tableTotal>0"
+        :total="tableTotal"
+        :page.sync="listQuery.page"
+        :limit.sync="listQuery.pageSize"
+        @pagination="getList" />
+      </el-col>
+    </el-row>
+    <el-dialog width="30%" :visible.sync="registerDialog" :close-on-click-modal='false' >
+      <el-form :model="register" :rules="rules" label-width="80px" ref="ruleForm" >
+        <el-form-item label="账号" prop="userName">
+          <el-input v-model="register.userName" placeholder="请输入账号"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input type="password" v-model="register.password" placeholder="请输入密码"></el-input>
+        </el-form-item>
+        <el-form-item label="用户名" prop="name">
+          <el-input v-model="register.name" placeholder="请输入用户名"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+          <el-button @click="resetForm('ruleForm')">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { apiuserList, apiDeleteUser, apiRegister, apiUpdateUser } from '@/api'
 import { parseTime } from '@/utils/date'
+import utils from '@/utils/index'
+import customTable from '@/components/customTable'
+import pagination from '@/components/pagination'
 export default {
+  components: {
+    customTable,
+    pagination
+  },
   data () {
     return {
+      registerDialog: false,
+      tableTotal: 0,
+      register: {
+        userName: '',
+        password: '',
+        name: ''
+      },
+      rules: {
+        userName: [{ required: true, message: '账号不能为空', trigger: 'blur' }],
+        password: [{ required: true, message: '密码不能为空', trigger: 'blur' }],
+        name: [{ required: true, message: '用户名不能为空', trigger: 'blur' }]
+      },
+      listQuery: {
+        page: 1,
+        pageSize: 10
+      },
+      tableHead: [
+        { prop: 'id', label: 'ID', width: 70, fixed: 'left' },
+        { prop: 'userName', label: '账号' },
+        { prop: 'name', label: '用户名' },
+        { prop: 'status', label: '权限', scope: (row) => { return (<div>{row.status === 0 ? '用户' : '管理员'}</div>) } },
+        { prop: 'createDate', label: '日期' },
+        { label: '操作',
+          fixed: 'right',
+          scope: (row) => {
+            return (<div>
+              {<el-button type='danger' plain size="mini" onClick={() => this.delete(row)}>删除</el-button>}</div>)
+          } }
+      ],
       tableData: [],
-      loading: false,
-      ids: [],
-      dialogFormVisible: false,
-      userInfo: {},
-      dialogLabel: 0
+      loading: false
     }
   },
   created () {
     this.getList()
   },
   methods: {
-    rowClick (row) {
-      this.dialogLabel = 1
-      this.dialogFormVisible = true
-      this.userInfo = row
-    },
-    // 多选
-    selectionChange (e) {
-      this.ids = []
-      e.forEach(item => { this.ids.push(item.id) })
-    },
-    // 添加/修改
-    addUser () {
-      if (this.userInfo.userName === undefined || this.userInfo.userName === '') {
-        this.message('账号不能为空', 'warning')
-        return
-      }
-      if (this.dialogLabel === 0) {
-        apiRegister(this.userInfo)
-          .then(res => {
-            if (res.code === 201) {
-              this.message(res.msg, 'warning')
-            } else {
-              this.message(res.msg, 'success')
-              this.getList()
-              this.dialogFormVisible = false
-            }
+    submitForm (formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          apiRegister(this.register).then(res => {
+            if (res.code !== 200) return utils.message(res.msg, 'warning')
+            utils.message(res.msg, 'success')
+            this.getList()
+            this.registerDialog = false
           })
-      } else {
-        apiUpdateUser(this.userInfo)
-          .then(res => {
-            if (res.code === 201) {
-              this.message(res.msg, 'warning')
-            } else {
-              this.message(res.msg, 'success')
-              this.dialogFormVisible = false
-            }
-          })
-      }
-    },
-    message (title, type = 'info') {
-      this.$message({
-        message: title,
-        type: type
+        }
       })
     },
-    deleteUsers () {
-      this.deleteUser(this.ids)
+    resetForm (formName) {
+      this.$refs[formName].resetFields()
     },
-    // 删除
-    deleteUser (id) {
-      this.$confirm('此操作将永久删除该账号, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          let uid = JSON.parse(sessionStorage.getItem('userInfo')).uid
-          apiDeleteUser({ ids: id, uid: uid })
-            .then(res => {
-              if (res.code === 201) {
-                this.message(res.msg, 'warning')
-              } else {
-                this.message(res.msg, 'success')
-                this.getList()
-              }
-            })
-        })
-        .catch(() => {})
+    search () {
+      this.listQuery.page = 1
+      this.getList()
     },
     // 获取用户列表
     getList () {
       this.loading = true
-      apiuserList().then(res => {
-        this.tableData = res.data
+      apiuserList(this.listQuery).then(res => {
+        this.tableData = res.data.list
+        this.tableTotal = res.data.total
         this.tableData.forEach(item => {
           item.createDate = parseTime(item.createDate, '{y}-{m}-{d}')
         })
         this.loading = false
       })
     },
-    dialogClose () {
-      this.userInfo = {}
-      this.dialogLabel = 0
+    delete (row) {
+      let uid = JSON.parse(sessionStorage.getItem('userInfo')).uid
+      this.$confirm('此操作将删除该账号，是否继续', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(res => {
+        apiDeleteUser({ uid: uid, ids: [row.id] }).then(res => {
+          if (res.code !== 200) return utils.message(res.msg, 'warning')
+          utils.message(res.msg, 'success')
+          this.getList()
+        })
+      }).catch(() => {})
     }
   }
 }
@@ -152,23 +141,13 @@ export default {
 
 <style lang="scss" scoped>
 .templateCont{
-  background: #fff;
+  // background: #fff;
   height: 100%;
 }
-.table-cont {
-  .table-cont-head {
-    display: flex;
-    justify-content: space-between;
-    color: #333;
-    .pop-add {
-      border-radius: 0 0 12px 0;
-    }
-    .pop-del {
-      border-radius: 0 0 0 12px;
-    }
+.table{
+    margin-top:40px;
+    background:#fff;
+    border-radius:6px;
+    overflow: hidden;
   }
-  .table-cont-body{
-    padding: 30px;
-  }
-}
 </style>

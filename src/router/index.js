@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import article from './article'
 // Vue.use(VueRouter)
 if (!window.VueRouter) Vue.use(VueRouter)
 
@@ -26,26 +27,15 @@ const routes = [
           },
           {
             path: '/article',
-            component: r => require.ensure([], () => r(require('../views/container/article/index.vue'))),
+            component: article.index,
             children: [
-              {
-                path: '/article',
-                component: r => require.ensure([], () => r(require('../views/container/article/children/list.vue')))
-              },
-              {
-                path: '/article/details',
-                component: r => require.ensure([], () => r(require('../views/container/article/children/details.vue')))
-              }
+              { path: '/article', component: article.list },
+              { path: '/article/details', component: article.details }
             ]
           },
-          {
-            path: '/article/publish',
-            component: r => require.ensure([], () => r(require('../views/container/article/publish.vue')))
-          },
-          {
-            path: '/article/manage',
-            component: r => require.ensure([], () => r(require('../views/container/article/manage.vue')))
-          }
+          { path: '/article/publish', component: article.publish },
+          { path: '/article/edit', component: article.edit },
+          { path: '/article/manage', component: article.manage }
         ]
       },
       {

@@ -47,10 +47,8 @@ var userData = {
     let query = await utils.format(req)
     let sql = ''
     let arr = []
-    if (query.password != null) {
-      if (query.password === '') {
-        return json(res, {}, '密码不能为空', 201)
-      }
+    if (query.password) {
+      if (query.password === '') return json(res, {}, '密码不能为空', 201)
       sql = 'UPDATE userList SET name=?,password=? WHERE id=?'
       arr = [query.name, query.password, query.id]
     } else {
@@ -66,31 +64,34 @@ var userData = {
       })
   },
   // 用户列表
-  userList: (req, res, next) => {
-    poolextend('SELECT id,userName,name,status,createDate FROM userList')
-      .then(result => {
-        let msg = '成功'
-        json(res, result, msg)
-      })
-      .catch(err => {
-        json(res, err, '失败')
-      })
+  userList: async (req, res, next) => {
+    const query = utils.format(req)
+    let data = {}
+    let sql = 'SELECT id,userName,name,status,createDate FROM userList'
+    let where = ''
+    if (query.userName) where = ` WHERE userName LIKE '%${query.userName}%'`
+    sql += where
+    if (query.page) sql += ` LIMIT ${(query.page - 1) * query.pageSize},${query.pageSize}`
+    try {
+      let [total] = await poolextend(`SELECT COUNT(id) as total FROM userList ${where}`)
+      data.list = await poolextend(sql)
+      data.total = total.total
+      json(res, data, '成功')
+    } catch (err) {
+      json(res, err, '失败', 201)
+    }
   },
   // 删除
   delete: async (req, res, next) => {
     let query = await utils.format(req)
-    let [data] = await poolextend('SELECT status FROM userList WHERE uid=?', [query.uid])
-    if (data.status !== 1) {
-      json(res, {}, '权限不足', 201)
-      return
-    }
-    poolextend(`DELETE FROM userList WHERE id in (${query.ids})`)
-      .then(result => {
-        json(res, result, '成功')
-      })
-      .catch(err => {
-        json(res, err, '删除失败')
-      })
+    try {
+      let [data] = await poolextend(`SELECT status FROM userList WHERE uid=?`, [query.uid])
+      if (data.status !== 1) return json(res, null, '权限不足', 201)
+    } catch (err) { return json(res, err, '失败', 201) }
+    try {
+      await poolextend(`DELETE FROM userList WHERE id in (${query.ids})`)
+      json(res, null, '成功')
+    } catch (err) { json(res, err, '删除失败') }
   }
 }
 module.exports = userData

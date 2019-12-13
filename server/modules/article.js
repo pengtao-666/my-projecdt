@@ -137,6 +137,18 @@ var apiArtcle = {
     } catch (err) {
       json(res, err, '失败', 201)
     }
+  },
+  update_article: async (req, res, next) => {
+    const query = await utils.format(req)
+    let sql = `UPDATE article_cont SET title=?,content=?,src=?,subclassId=?,categoryId=? `
+    sql += `WHERE id=?`
+    const arr = [query.title, query.content, query.src, query.subclassId, query.categoryId, query.id]
+    try {
+      await poolextend(sql, arr)
+      json(res, null, '成功')
+    } catch (err) {
+      json(res, err, '错误', 201)
+    }
   }
 }
 module.exports = apiArtcle

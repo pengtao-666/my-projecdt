@@ -2,6 +2,7 @@
 node_modules
 /dist
 server/app.js
+server/public/fileUpload
 # local env files
 .env.local
 .env.*.local

@@ -2,7 +2,7 @@
   <div class="templateCont">
     <div class="public_template custom_input">
       <el-input v-model="submitQuery.title" placeholder="请输入文章标题"></el-input>
-      <el-button type="primary" @click="submit">发布</el-button>
+      <el-button type="primary" @click="submit">提交</el-button>
     </div>
     <div class="public_template">
       <p>请选择分类</p>
@@ -36,13 +36,13 @@
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
     </div>
-    <quillEditor class="editor" :text="submitQuery.content" @input="editorCont" />
+    <quillEditor v-if="submitQuery.content" class="editor" :value="submitQuery.content" @input="editorCont" />
   </div>
 </template>
 
 <script>
 import quillEditor from '@/components/quilleditor'
-import { getCategory, addSubclass, addArtcle } from '@/api/article'
+import { getCategory, addSubclass, updateArticle, getArtcleDetails } from '@/api/article'
 import { parseTime } from '@/utils/date'
 import baseUrl from '../../../baseUrl'
 export default {
@@ -54,12 +54,10 @@ export default {
       // 提交请求参数
       submitQuery: {
         title: '',
-        content: '',
+        content: null,
         categoryId: '',
         subclassId: '',
-        src: '',
-        author: JSON.parse(sessionStorage.getItem('userInfo')).userName,
-        createDate: parseTime(new Date(), '{y}-{m}-{d} {h}:{i}')
+        src: ''
       },
       serverUrl: `${baseUrl}article/upload`,
       // 一级分类列表
@@ -68,12 +66,19 @@ export default {
       subclass: []
     }
   },
+  created () {
+    this.getArticleInfo()
+  },
   async mounted () {
     this.category = await this.categoryList({ type: 0 })
-    this.submitQuery.categoryId = this.category[0].id
     this.getSubclass()
   },
   methods: {
+    getArticleInfo () {
+      getArtcleDetails({ id: this.$route.query.id }).then(res => {
+        this.submitQuery = res.data
+      })
+    },
     handleAvatarSuccess (res, file) {
       if (process.env.NODE_ENV === 'production') {
         this.submitQuery.src = `http://118.24.125.76:3000/${res.data}`
@@ -86,10 +91,10 @@ export default {
       const isLt2M = file.size / 1024 / 1024 < 2
 
       if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!')
+        this.$message.error('上传图片只能是 JPG 格式!')
       }
       if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
+        this.$message.error('上传图片大小不能超过 2MB!')
       }
       return isJPG && isLt2M
     },
@@ -99,10 +104,11 @@ export default {
       } else if (!this.submitQuery.content) {
         return this.message('请输入文章内容', 'warning')
       }
-      addArtcle(this.submitQuery).then(res => {
+      updateArticle(this.submitQuery).then(res => {
+        if (res.code !== 200) return this.message(res.msg, 'warning')
         this.message(res.msg, 'success')
         this.$router.push({
-          path: '/article'
+          path: '/article/manage'
         })
       })
     },
@@ -113,15 +119,7 @@ export default {
       })
     },
     async getSubclass () {
-      this.subclass = await this.categoryList({
-        type: 1,
-        categoryId: this.submitQuery.categoryId
-      })
-      if (this.subclass[0]) {
-        this.submitQuery.subclassId = this.subclass[0].id
-      } else {
-        this.submitQuery.subclassId = null
-      }
+      this.subclass = await this.categoryList({ type: 1, categoryId: this.submitQuery.categoryId })
     },
     // 获取分类列表  type 0 一级 1 二级
     categoryList (data) {
@@ -157,7 +155,6 @@ export default {
     },
     editorCont (e) {
       this.submitQuery.content = e
-      // console.log(e)
     }
   }
 }
