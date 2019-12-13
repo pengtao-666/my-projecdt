@@ -35,11 +35,10 @@ var userData = {
     let sqlArr = [query.userName, query.password]
     try {
       let [data] = await poolextend(sql, sqlArr)
-      let msg = '登录成功'
-      if (!data) msg = '登录名或密码错误'
-      json(res, data, msg)
+      if (!data) return json(res, data, '登录名或密码错误', 201)
+      json(res, data, '登录成功')
     } catch (err) {
-      json(res, err, '登录失败')
+      json(res, err, '登录失败', 201)
     }
   },
   // 更改
@@ -49,19 +48,19 @@ var userData = {
     let arr = []
     if (query.password) {
       if (query.password === '') return json(res, {}, '密码不能为空', 201)
-      sql = 'UPDATE userList SET name=?,password=? WHERE id=?'
-      arr = [query.name, query.password, query.id]
+      sql = 'UPDATE userList SET name=?,password=? WHERE id=? AND password=?'
+      arr = [query.name, query.password, query.id, query.oldPassword]
     } else {
       sql = 'UPDATE userList SET name=? WHERE id=?'
       arr = [query.name, query.id]
     }
-    poolextend(sql, arr)
-      .then(result => {
-        json(res, result, '成功')
-      })
-      .catch(err => {
-        json(res, err, '修改失败', 201)
-      })
+    try {
+      const data = await poolextend(sql, arr)
+      if (data.affectedRows <= 0) return json(res, null, '修改失败,老密码错误或用户不存在', 201)
+      json(res, null, '成功')
+    } catch (err) {
+      json(res, err, '修改失败', 201)
+    }
   },
   // 用户列表
   userList: async (req, res, next) => {
