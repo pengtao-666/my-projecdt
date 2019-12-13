@@ -35,7 +35,7 @@ var userData = {
     let sqlArr = [query.userName, query.password]
     try {
       let [data] = await poolextend(sql, sqlArr)
-      if (!data) return json(res, data, '登录名或密码错误', 201)
+      if (!data) return json(res, null, '登录名或密码错误', 201)
       json(res, data, '登录成功')
     } catch (err) {
       json(res, err, '登录失败', 201)
