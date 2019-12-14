@@ -131,6 +131,8 @@ var apiArtcle = {
   },
   delete_article: async (req, res, next) => {
     const query = utils.format(req)
+    let [data] = await poolextend(`SELECT status FROM userList WHERE uid=?`, [query.uid])
+    if (data.status !== 1) return json(res, null, '权限不足', 201)
     try {
       await poolextend(`delete from article_cont where id=${query.id}`)
       json(res, {}, '成功')

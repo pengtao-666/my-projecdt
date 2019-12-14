@@ -92,7 +92,8 @@ export default {
       utils.jump_query(this, '/article/edit', { id: row.id })
     },
     delete (row) {
-      deleteArticle({ id: row.id }).then(res => {
+      const uid = JSON.parse(sessionStorage.getItem('userInfo')).uid
+      deleteArticle({ id: row.id, uid: uid }).then(res => {
         this.getTableList()
       })
     }
