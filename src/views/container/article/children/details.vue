@@ -2,7 +2,7 @@
 <div class="container">
   <el-page-header @back="goBack" :content="artcleInfo.categoryName+'-'+artcleInfo.subclassName">
   </el-page-header>
-  <div class="ql-container ql-snow">
+  <div class="ql-container ql-snow" v-loading="loading">
     <div class="head">
       <h1>{{artcleInfo.title}}</h1>
     <p><span>{{artcleInfo.author}}</span> <span>{{artcleInfo.createDate}}</span></p>
@@ -18,12 +18,15 @@ import { getArtcleDetails } from '@/api/article'
 export default {
   data () {
     return {
-      artcleInfo: {}
+      artcleInfo: {},
+      loading: false
     }
   },
   mounted () {
     let id = this.$route.query.id
+    this.loading = true
     getArtcleDetails({ id: id }).then(res => {
+      this.loading = false
       this.artcleInfo = res.data
     })
   },

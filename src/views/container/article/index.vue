@@ -6,7 +6,7 @@
       </el-col>
       <el-col :span="5">
         <el-input clearable placeholder="请输入搜索内容" v-model="listQuery.title" class="input-with-select">
-          <el-button @click="getArtcleList" slot="append" icon="el-icon-search"></el-button>
+          <el-button @click="search" slot="append" icon="el-icon-search"></el-button>
         </el-input>
       </el-col>
       <el-col :span="3">
@@ -96,12 +96,7 @@ export default {
       if (this.$route.path !== '/article') {
         this.jump('/article')
       }
-      this.listLoading = true
-      searchArtcle({ title: this.title }).then(res => {
-        this.categoryType = 0
-        this.artcleList = res.data
-        this.listLoading = false
-      })
+      this.getArtcleList()
     },
     jump (url, id) {
       this.$router.push({
