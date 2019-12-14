@@ -94,6 +94,7 @@ export default {
     delete (row) {
       const uid = JSON.parse(sessionStorage.getItem('userInfo')).uid
       deleteArticle({ id: row.id, uid: uid }).then(res => {
+        if (res.code !== 200) return utils.message(res.msg, 'warning')
         this.getTableList()
       })
     }
