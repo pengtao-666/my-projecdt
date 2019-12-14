@@ -26,8 +26,8 @@ export default {
     return {
       loading: false,
       form: {
-        userName: '',
-        password: ''
+        userName: 'tourist',
+        password: 'tourist'
       },
       context: null,
       arr: [],
