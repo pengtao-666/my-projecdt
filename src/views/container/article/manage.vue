@@ -40,6 +40,7 @@ export default {
       listQuery: {
         title: '',
         categoryId: '',
+        author: JSON.parse(sessionStorage.getItem('userInfo')).userName,
         page: 1,
         pageSize: 10
       },
@@ -89,6 +90,7 @@ export default {
       utils.jump_query(this, '/article/details', { id: row.id })
     },
     edit (row) {
+      if (row.author !== this.listQuery.author) return utils.message('权限不足', 'warning')
       utils.jump_query(this, '/article/edit', { id: row.id })
     },
     delete (row) {
