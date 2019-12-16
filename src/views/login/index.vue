@@ -14,6 +14,7 @@
             <el-button type="primary" @click="are_you_ok">登录</el-button>
             <el-button type="warning" @click="region">注册</el-button>
           </el-form-item>
+          <p>游客账号：tourist 密码：tourist</p>
         </el-form>
       </el-col>
     </el-row>
@@ -26,8 +27,8 @@ export default {
     return {
       loading: false,
       form: {
-        userName: 'tourist',
-        password: 'tourist'
+        userName: '',
+        password: ''
       },
       context: null,
       arr: [],

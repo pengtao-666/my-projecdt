@@ -14,7 +14,7 @@
       </el-col>
     </el-row>
       <el-col class="table">
-        <customTable v-loading="loading" :height="600" :tableHead="tableHead" :tableData="tableData" />
+        <customTable v-loading="loading" :height="550" :tableHead="tableHead" :tableData="tableData" />
         <pagination
          v-show="tableTotal>0"
         :total="tableTotal"
@@ -95,7 +95,7 @@ export default {
     },
     delete (row) {
       const uid = JSON.parse(sessionStorage.getItem('userInfo')).uid
-      deleteArticle({ id: row.id, uid: uid }).then(res => {
+      deleteArticle({ id: row.id, uid: uid, author: row.author }).then(res => {
         if (res.code !== 200) return utils.message(res.msg, 'warning')
         this.getTableList()
       })

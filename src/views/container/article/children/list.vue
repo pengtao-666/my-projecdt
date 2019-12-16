@@ -3,7 +3,7 @@
     <div class="list_info" @click="jump(item.id)" v-for="(item,index) in artcleList" :key="index">
       <div>
         <p class="title">
-          <span>{{item.subclassName}}</span>
+          <span v-if="item.subclassName">{{item.subclassName}}</span>
           <!-- <span>{{item.subclassName}}</span> -->
           {{item.title}}
         </p>

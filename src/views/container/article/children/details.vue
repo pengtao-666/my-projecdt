@@ -1,6 +1,6 @@
 <template>
 <div class="container">
-  <el-page-header @back="goBack" :content="artcleInfo.categoryName+'-'+artcleInfo.subclassName">
+  <el-page-header @back="goBack" :content="artcleInfo.categoryName+'-'+artcleInfo.subclassName?artcleInfo.subclassName:''">
   </el-page-header>
   <div class="ql-container ql-snow" v-loading="loading">
     <div class="head">

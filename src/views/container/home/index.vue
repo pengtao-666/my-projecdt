@@ -1,13 +1,13 @@
 <template>
     <div class="templateCont">
       <el-row :gutter="20" class="home">
-        <el-col :lg="4">
+        <el-col :lg="4" :md="10" :sm="10">
           <div class="clock-main">
             <p>{{currentTiem}}</p>
             <p>{{currentDate}}</p>
           </div>
         </el-col>
-        <el-col :lg="8">
+        <el-col :lg="8" :md="14" :sm="14">
           <div class="remind">
             <h4>事件提醒</h4>
             <div>
@@ -16,7 +16,7 @@
             </div>
           </div>
         </el-col>
-        <el-col :lg="12">
+        <el-col :lg="12" :md="24" :sm="24">
           <div class="weather">
             <div class="left">
             <h3>{{city}}</h3>
@@ -46,27 +46,27 @@
             </div>
           </div>
         </el-col>
-        <el-col :lg="10">
+        <el-col :lg="10" :md="10" :sm="10" >
           <el-row>
-            <el-col :lg="12" style="padding-right:20px">
+            <el-col :lg="12" :md="12" :sm="12" style="padding-right:20px">
               <div class="article journal" @click="jump('/article')">
                 <p>所有日志</p>
                 <p>99</p>
               </div>
             </el-col>
-            <el-col :lg="12">
+            <el-col :lg="12" :md="12" :sm="12">
               <el-col><div class="articles"><p>技术分享</p><p>99</p></div></el-col>
               <el-col><div class="articles"><p>生活感悟</p><p>99</p></div></el-col>
             </el-col>
           </el-row>
         </el-col>
-        <el-col :lg="14">
+        <el-col :lg="14" :md="14" :sm="14">
           <el-row :gutter="10">
-            <el-col :lg="24"><div class="div2"><p>推荐日志</p></div></el-col>
-            <el-col :lg="6"><div class="div1"><p>旅行足迹</p><p>99</p></div></el-col>
-            <el-col :lg="6"><div class="div1"><p></p></div></el-col>
-            <el-col :lg="6"><div class="div1"  @click="jump('/article/publish')"><p>发布日志</p></div></el-col>
-            <el-col :lg="6"><div class="div1"><p>添加提醒</p></div></el-col>
+            <el-col :sm="24" :md="24" :lg="24"><div class="div2"><p>推荐日志</p></div></el-col>
+            <el-col :sm="6" :md="6" :lg="6"><div class="div1"><p>旅行足迹</p><p>99</p></div></el-col>
+            <el-col :sm="6" :md="6" :lg="6"><div class="div1"><p></p></div></el-col>
+            <el-col :sm="6" :md="6" :lg="6"><div class="div1"  @click="jump('/article/publish')"><p>发布日志</p></div></el-col>
+            <el-col :sm="6" :md="6" :lg="6"><div class="div1"><p>添加提醒</p></div></el-col>
           </el-row>
         </el-col>
       </el-row>
@@ -124,8 +124,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .home{
-    padding: 100px;
+  .templateCont{
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .el-col{
     margin-bottom: 20px;
@@ -231,13 +233,15 @@ export default {
     cursor: pointer;
     @include cont_style(280px);
   }
-  .articles{
+  .articles,.div1,.div2{
     @include cont_style(130px);
   }
-  .div1{
-    @include cont_style(130px);
-  }
-  .div2{
-    @include cont_style(130px);
+  @media (max-width: 768px) {
+    .div1,.div2,.articles{
+      height: 100px;
+    }
+    .article{
+      height: 220px;
+    }
   }
 </style>

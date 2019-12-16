@@ -55,12 +55,18 @@ var apiArtcle = {
   add_artcle: async (req, res, next) => {
     const q = await utils.format(req)
     try {
-      const sql = 'INSERT INTO article_cont (title,author,createDate,content,src,subclassId,categoryId) VALUES(?,?,?,?,?,?,?)'
-      await poolextend(sql, [q.title, q.author, q.createDate, q.content, q.src, q.subclassId, q.categoryId])
+      await poolextend('INSERT INTO article_cont SET ?', q)
       json(res, null, '添加成功')
     } catch (err) {
-      json(res, err, '错误')
+      json(res, err, '添加失败', 201)
     }
+    // try {
+    //   const sql = 'INSERT INTO article_cont (title,author,createDate,content,src,subclassId,categoryId) VALUES(?,?,?,?,?,?,?)'
+    //   await poolextend(sql, [q.title, q.author, q.createDate, q.content, q.src, q.subclassId, q.categoryId])
+    //   json(res, null, '添加成功')
+    // } catch (err) {
+    //   json(res, err, '错误')
+    // }
   },
   search_artcle: async (req, res, next) => {
     const query = utils.format(req)
@@ -131,8 +137,8 @@ var apiArtcle = {
   },
   delete_article: async (req, res, next) => {
     const query = utils.format(req)
-    let [data] = await poolextend(`SELECT status FROM userList WHERE uid=?`, [query.uid])
-    if (data.status !== 1) return json(res, null, '权限不足', 201)
+    let [data] = await poolextend(`SELECT status,userName FROM userList WHERE uid=?`, [query.uid])
+    if (query.author !== data.userName && data.status !== 1) return json(res, data, '权限不足', 201)
     try {
       await poolextend(`delete from article_cont where id=${query.id}`)
       json(res, {}, '成功')

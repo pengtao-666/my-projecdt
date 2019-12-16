@@ -56,8 +56,8 @@ export default {
         title: '',
         content: '',
         categoryId: '',
-        subclassId: '',
-        src: '',
+        subclassId: null,
+        src: null,
         author: JSON.parse(sessionStorage.getItem('userInfo')).userName,
         createDate: parseTime(new Date(), '{y}-{m}-{d} {h}:{i}')
       },
@@ -100,6 +100,7 @@ export default {
         return this.message('请输入文章内容', 'warning')
       }
       addArtcle(this.submitQuery).then(res => {
+        if (res.code !== 200) return this.message(res.msg, 'warning')
         this.message(res.msg, 'success')
         this.$router.push({
           path: '/article'
