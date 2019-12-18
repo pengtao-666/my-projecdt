@@ -15,7 +15,7 @@ returnImg = async (res, data, i) => {
   if (i < data.length) {
     returnImg(res, data, i)
   } else {
-    json(res, arr, '结果')
+    json(res, null, '结果')
   }
 }
 publicAccess = item => {
