@@ -22,7 +22,7 @@ publicAccess = item => {
   return new Promise((resolve,reject)=>{
     fs.access(item, async err => {
       if (err) {
-        await poolextend(`DELETE FORM file_hash WHERE url='${err.path}'`)
+        await poolextend(`DELETE FORM file_hash WHERE url=?`,[err.path])
       }
       resolve()
     })
