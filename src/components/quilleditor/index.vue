@@ -80,8 +80,9 @@ export default {
           imageResize: {}
         }
       },
-      serverUrl: `${baseUrl}article/upload`, // 上传的图片服务器地址
-      imageBaseUrl: `http://localhost:3000/`
+      // serverUrl: `${baseUrl}article/upload`, // 上传的图片服务器地址
+      serverUrl: `http://118.24.125.76/api/article/upload`,
+      imageBaseUrl: `http://118.24.125.76:3000/`
     }
   },
   mounted () {

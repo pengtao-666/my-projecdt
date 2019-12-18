@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const user = require('../modules/user')
+// 公共模块
+router.use('/public', require('./public'))
 // 文章模块
 router.use('/article', require('./article'))
 
