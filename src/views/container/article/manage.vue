@@ -14,7 +14,7 @@
       </el-col>
     </el-row>
       <el-col class="table">
-        <customTable v-loading="loading" :height="550" :tableHead="tableHead" :tableData="tableData" />
+        <customTable v-loading="loading" :tableHead="tableHead" :tableData="tableData" />
         <pagination
          v-show="tableTotal>0"
         :total="tableTotal"

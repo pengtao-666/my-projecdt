@@ -1,7 +1,6 @@
 <template>
     <el-table
-      max-height="600"
-      :height="height"
+      :max-height="height"
       :data="tableData"
       :show-summary="showSummary"
       :header-cell-style="tableHeaderColor"
@@ -37,7 +36,7 @@ export default {
   props: {
     height: {
       type: [Number, String],
-      default: () => { return 600 }
+      default: 600
     },
     tableData: {
       type: Array,
@@ -50,11 +49,11 @@ export default {
     // 是否显示合计
     showSummary: {
       type: Boolean,
-      default: () => { return false }
+      default: false
     },
     listQuery: {
       type: Object,
-      default: () => { return null }
+      default: null
     }
   },
   data () {
