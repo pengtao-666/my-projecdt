@@ -18,6 +18,7 @@
         fit="fill"
       ></el-image>
     </div>
+    <el-divider v-if="artcleList.length>0">没有更多了~</el-divider>
   </div>
 </template>
 
@@ -46,7 +47,7 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  max-height: calc(100% - 96px);
+  max-height: 100%;
   overflow: auto;
   cursor: pointer;
   @mixin between {

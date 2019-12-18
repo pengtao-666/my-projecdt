@@ -2,7 +2,7 @@
   <div class="menu-cont">
     <div class="menu-item" v-for="(item,index) in catalogList" :key="index" @click.stop="jump(item.path)">
       <el-tooltip effect="dark" :content="item.title" placement="left">
-        <img src="@/assets/img/3.jpg" alt="">
+        <el-image class="img" :src="item.src" fit="cover"></el-image>
       </el-tooltip>
     </div>
   </div>
@@ -51,7 +51,7 @@ export default {
   width: 60px;
   height: 65px;
   position: relative;
-  img{
+  .img{
     position: absolute;
     top: 50%;
     left: 50%;

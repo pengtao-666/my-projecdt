@@ -15,13 +15,7 @@
     </el-row>
     <el-row class="cont">
       <el-col :span="18" class="left_list" >
-        <router-view v-loading="listLoading" :artcleList="artcleList" />
-          <pagination
-          v-show="tableTotal>0 && $route.path == '/article'"
-          :total="tableTotal"
-          :page.sync="listQuery.page"
-          :limit.sync="listQuery.pageSize"
-          @pagination="getArtcleList" />
+        <router-view v-loading="listLoading" :artcleList="artcleList" v-infinite-scroll="load" />
         <p v-if="artcleList.length<1" style="text-align:center;margin-top:20px;">暂无数据~</p>
       </el-col>
       <el-col :span="6" class="right_label">
@@ -36,11 +30,7 @@
 
 <script>
 import { getCategory, getArtcle, searchArtcle } from '@/api/article'
-import pagination from '@/components/pagination/index'
 export default {
-  components: {
-    pagination
-  },
   data () {
     return {
       listLoading: false,
@@ -55,6 +45,7 @@ export default {
         page: 1,
         pageSize: 10
       },
+
       tableTotal: 0
     }
   },
@@ -88,14 +79,22 @@ export default {
       }
       getArtcle(this.listQuery).then(res => {
         this.listLoading = false
-        this.artcleList = res.data.list
+        if (this.listQuery.page !== 1) {
+          this.artcleList = this.artcleList.concat(res.data.list)
+        } else {
+          this.artcleList = res.data.list
+        }
         this.tableTotal = res.data.total
       })
     },
     search () {
-      if (this.$route.path !== '/article') {
-        this.jump('/article')
-      }
+      if (this.$route.path !== '/article') this.jump('/article')
+      this.getArtcleList()
+    },
+    load () {
+      if (this.$route.path !== '/article') return
+      if (this.listQuery.page * this.listQuery.pageSize >= this.tableTotal) return
+      this.listQuery.page++
       this.getArtcleList()
     },
     jump (url, id) {

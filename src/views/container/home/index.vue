@@ -128,6 +128,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
   }
   .el-col{
     margin-bottom: 20px;

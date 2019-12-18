@@ -2,7 +2,7 @@
   <div>
     <div class="cards">
       <div class="card" :class="current==index?'card-hover':''" @click="cardClick(index)" v-for="(item,index) in [1,2,3,4,5,6]" :key="index" :style="'left:'+index*(100/6)+'px'">
-        <img src="@/assets/img/a.jpg" alt="">
+        <img src="@/assets/img/ll.jpeg" alt="">
       </div>
     </div>
   </div>
