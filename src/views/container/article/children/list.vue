@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="list_info" @click="jump(item.id)" v-for="(item,index) in artcleList" :key="index">
+    <div class="list_info" :class="index==artcleList.length-1?'end_info':''" @click="jump(item.id)" v-for="(item,index) in artcleList" :key="index">
       <div>
         <p class="title">
           <span v-if="item.subclassName">{{item.subclassName}}</span>
@@ -86,12 +86,12 @@ export default {
           background: #007fff;
           color: #fff;
         }
-        // &:last-child {
-        //   @include font_style(24px, 13px);
-        //   color:#007fff;
-        // }
       }
     }
+  }
+  .end_info{
+    border-bottom: 0;
+    padding-bottom: 0px;
   }
 }
 </style>

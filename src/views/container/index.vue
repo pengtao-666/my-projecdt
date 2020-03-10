@@ -20,9 +20,9 @@ export default {
     return {
       userInfo: {},
       catalogList: [
-        { title: '主页', path: '/', src: require('@/assets/img/ll.jpeg') },
-        { title: '文章管理', path: '/article/manage', src: require('@/assets/img/ll.jpeg') },
-        { title: '相册', path: '/album', src: require('@/assets/img/ll.jpeg') },
+        { title: '主页', path: '/', src: require('@/assets/img/mr.jpg') },
+        { title: '文章管理', path: '/article/manage', src: require('@/assets/img/2.jpg') },
+        // { title: '相册', path: '/album', src: require('@/assets/img/ll.jpeg') },
         { title: '账号管理', path: '/userList', src: require('@/assets/img/ll.jpeg') },
         { title: '注销', path: '/login', src: require('@/assets/img/3.jpg') }
       ]

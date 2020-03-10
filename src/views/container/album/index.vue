@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="cards">
-      <div class="card" :class="current==index?'card-hover':''" @click="cardClick(index)" v-for="(item,index) in [1,2,3,4,5,6]" :key="index" :style="'left:'+index*(100/6)+'px'">
-        <img src="@/assets/img/ll.jpeg" alt="">
+      <div class="card" :class="current==index?'card-hover':''" @click="cardClick(index)" v-for="(item,index) in albums" :key="index" :style="'left:'+index*(100/6)+'px'">
+        <el-image class="img" :src="item.img" fit="contain" alt=""/>
       </div>
     </div>
   </div>
@@ -12,7 +12,14 @@
 export default {
   data () {
     return {
-      current: null
+      current: null,
+      albums: [
+        { img: require('@/assets/img/l1.jpg') },
+        { img: require('@/assets/img/l2.jpg') },
+        { img: require('@/assets/img/l3.jpg') },
+        { img: require('@/assets/img/l4.jpg') },
+        { img: require('@/assets/img/ll.jpeg') }
+      ]
     }
   },
   methods: {
@@ -45,38 +52,39 @@ export default {
   transition: .7s;
   cursor: pointer;
   &:hover{
-    img{
-      top: -30px;
+    .img{
+      top: 30px;
       left: -50px;
     }
   }
 }
-.card img{
+.card .img{
   @include absolute;
-  width: 100%;
-  border: 1px solid #ccc;
-  color: #ccc;
-  background: #fff;
+  // width: 100%;
+  height: 300px;
+  // border: 1px solid #ccc;
+  // color: #ccc;
+  // background: #fff;
   text-align: center;
   font-size: 12px;
   animation: randomswing 1s 1.1s infinite linear alternate;
   transition: .5s;
 }
-.card:nth-of-type(even) img{
+.card:nth-of-type(even) .img{
   animation: randomswing 1.5s 1.3s infinite linear alternate;
 }
 .card-hover{
   z-index: 1;
-  transform: translateY(150px) translateX(-90%);
+  transform: translateY(10px) translateX(-90%);
   left: 50%!important;
   &:hover{
-    img{
+    .img{
       top: 0;
       left: 0;
     }
   }
 }
-.card-hover img{
+.card-hover .img{
   width: 200%;
   animation-play-state: paused!important;
 }

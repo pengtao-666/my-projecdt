@@ -1,3 +1,8 @@
+<!--
+ * @Date: 2019-12-05 11:53:02
+ * @LastEditTime: 2020-03-10 12:45:53
+ * @Description: 发布文章
+ -->
 <template>
   <div class="templateCont">
     <div class="public_template custom_input">
