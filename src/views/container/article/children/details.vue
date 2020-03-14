@@ -59,4 +59,8 @@ export default {
       margin-bottom: 10px;
     }
   }
+  .ql-editor{
+    border: 1px solid #c9c6c6;
+    border-radius: 6px;
+  }
 </style>

@@ -37,7 +37,8 @@ const toolbarOptions = [
   [{ list: 'ordered' }, { list: 'bullet' }], // 有序、无序列表
   [{ script: 'sub' }, { script: 'super' }], // 上标/下标
   [{ indent: '-1' }, { indent: '+1' }], // 缩进
-  [{ size: ['small', false, 'large', 'huge'] }], // 字体大小
+  // [{ size: ['small', false, 'large', 'huge'] }], // 字体大小
+  [{ size: ['10px', '12px', '14px', '16px', '18px', '20px'] }],
   [{ header: [1, 2, 3, 4, 5, 6, false] }], // 标题
   [{ color: [] }, { background: [] }], // 字体颜色、字体背景颜色
   [{ font: [] }], // 字体种类
