@@ -11,5 +11,16 @@ module.exports = {
         break
     }
     return qs.parse(query)
+  },
+  format2 (req) {
+    switch (req.method) {
+      case 'GET':
+        req.query = qs.parse(req.query)
+        break
+      case 'POST':
+        req.body = qs.parse(req.body)
+        break
+    }
+    return req
   }
 }

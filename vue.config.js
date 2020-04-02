@@ -42,6 +42,7 @@ module.exports = {
     // 配置路径
     config.resolve.alias
       .set('@', resolve('./src'))
+      .set('@s', resolve('./server'))
       .set('com', resolve('./src/components'))
       .end()
     config.plugin('html').tap(args => {

@@ -1,6 +1,6 @@
 <!--
  * @Date: 2019-12-05 11:53:02
- * @LastEditTime: 2020-03-10 12:45:53
+ * @LastEditTime: 2020-03-24 15:18:05
  * @Description: 发布文章
  -->
 <template>
@@ -41,7 +41,7 @@
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
     </div>
-    <quillEditor class="editor" :text="submitQuery.content" @input="editorCont" />
+    <quillEditor class="editor" :value="submitQuery.content" @input="editorCont" />
   </div>
 </template>
 
@@ -89,7 +89,7 @@ export default {
       // }
     },
     beforeAvatarUpload (file) {
-      const isJPG = file.type === 'image/jpeg' || file.type === 'png'
+      const isJPG = /^image\/(jpeg|png|jpg)$/.test(file.type)
       const isLt2M = file.size / 1024 / 1024 < 2
 
       if (!isJPG) {

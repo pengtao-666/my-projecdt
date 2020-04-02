@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 const mysql = require('mysql')
 // mysql配置.
 const db = require('../db/db.js')
@@ -10,7 +9,7 @@ module.exports = function (sql, params) {
       connection.query(sql, params, function (err, results) {
         connection.release()
         if (err) {
-          reject(err)
+          resolve(err)
         } else {
           resolve(results)
         }

@@ -1,11 +1,17 @@
 const express = require('express')
 const router = express.Router()
 const user = require('../modules/user')
+const utils = require('../utils/index')
+// 账单
+router.use('/bill', (req, res, next) => {
+  req = utils.format2(req)
+  next()
+})
+router.use('/bill', require('./bill/index'))
 // 公共模块
 router.use('/public', require('./public'))
 // 文章模块
 router.use('/article', require('./article'))
-
 // 注册
 router.post('/register', (req, res, next) => {
   user.register(req, res, next)

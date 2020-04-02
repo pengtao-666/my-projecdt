@@ -9,7 +9,7 @@ var publicList = {
     returnImg(res, data, 0)
   }
 }
-returnImg = async (res, data, i) => {
+var returnImg = async (res, data, i) => {
   await publicAccess(data[i].url)
   i++
   if (i < data.length) {
@@ -18,11 +18,11 @@ returnImg = async (res, data, i) => {
     json(res, null, '结果')
   }
 }
-publicAccess = item => {
-  return new Promise((resolve,reject)=>{
+var publicAccess = item => {
+  return new Promise((resolve, reject) => {
     fs.access(item, async err => {
       if (err) {
-        await poolextend('DELETE FORM file_hash WHERE url=?',[err.path])
+        await poolextend('DELETE FORM file_hash WHERE url=?', [err.path])
       }
       resolve()
     })

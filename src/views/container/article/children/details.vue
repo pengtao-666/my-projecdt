@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import * as Quill from 'quill'
+// import * as Quill from 'quill'
 import { getArtcleDetails } from '@/api/article'
 export default {
   data () {
