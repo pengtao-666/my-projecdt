@@ -4,7 +4,7 @@ switch (process.env.NODE_ENV) {
     baseUrl = 'http://localhost:3000/api/' // 开发环境
     break
   case 'production':
-    baseUrl = 'http://118.24.125.76/api/'
+    baseUrl = 'https://www.pt66.xyz/api/'
     break
 }
 export default baseUrl
