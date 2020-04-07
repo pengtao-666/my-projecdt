@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-03-31 13:12:57
- * @LastEditTime: 2020-04-01 23:00:24
+ * @LastEditTime: 2020-04-06 21:28:39
  * @Description: 账单
  */
 // 连接池
@@ -10,9 +10,9 @@ const utils = require('../../utils/index.js')
 
 const bill = {
   get_list: async (req, res, next) => {
-    let sql = 'select * from bill_list where userId=?'
-    poolextend(sql, req.query).then(data => {
-      json(res, data, '')
+    let sql = `SELECT *,DATE_FORMAT(addTime,'%Y-%m-%d') AS date FROM bill_list WHERE DATE_FORMAT(addTime,'%Y-%m') = '${req.query.addTime}'`
+    poolextend(sql).then(data => {
+      json(res, data, '成功')
     })
   },
   increase: async (req, res, next) => {

@@ -10,7 +10,8 @@ var userData = {
   // 注册
   register: async (req, res, next) => {
     let query = await utils.format(req)
-    let uid = jwt.sign(query, SECRET)
+    // let uid = jwt.sign(new Date().getTime(), SECRET)
+    let uid = new Date().getTime()
     if (!query.userName) {
       return json(res, null, '账号不能为空', 201)
     }

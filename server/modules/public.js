@@ -1,8 +1,23 @@
 var poolextend = require('../utils/poolextend')
 var json = require('../utils/json')
-const utils = require('../utils/index')
+const formidable = require('formidable')
 const fs = require('fs')
+const uploadcos = require('../utils/cos')
 var publicList = {
+  // 上传图片
+  upload: (req, res, next) => {
+    var form = new formidable.IncomingForm()
+    var uploadDir = 'public/fileUpload/'
+    form.uploadDir = uploadDir
+    form.keepExtensions = true // 保留拓展名
+    form.maxFieldsSize = 20 * 1024 * 1024 // 上传文件的最大大小
+    form.hash = 'md5'
+    form.parse(req, async (err, queryData, files) => {
+      if (err) return json(res, err, '失败')
+      let data = await uploadcos.putObj(queryData, files)
+      json(res, data, '测试')
+    })
+  },
   // 检测图片资源
   optimizeImg: async (req, res, next) => {
     let data = await poolextend('SELECT * FROM file_hash')

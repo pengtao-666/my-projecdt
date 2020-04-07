@@ -2,8 +2,8 @@ const poolextend = require('../utils/poolextend')
 const json = require('../utils/json')
 const utils = require('../utils/index')
 const formidable = require('formidable')
-const path = require('path')
 const fs = require('fs')
+
 var apiArtcle = {
   add_category: async (req, res, next) => {
     const query = await utils.format(req)
@@ -30,7 +30,6 @@ var apiArtcle = {
       json(res, err.sqlMessage, '错误')
     }
   },
-
   upload: async (req, res, next) => {
     var form = new formidable.IncomingForm()
     var uploadDir = 'public/fileUpload/'
@@ -39,13 +38,14 @@ var apiArtcle = {
     form.maxFieldsSize = 20 * 1024 * 1024 // 上传文件的最大大小
     form.hash = 'md5'
     form.parse(req, async (err, fields, files) => {
-      if (err) return json(req, err, '错误')
+      if (err) return json(res, err, '错误')
       let [fileStatus] = await poolextend('SELECT url FROM file_hash WHERE hash=?', [files.file.hash])
       if (fileStatus) {
         fs.unlink(files.file.path, err => {
           if (err) console.log('失败')
         })
-        json(res, fileStatus.url, '成功')
+        // json(res, fileStatus.url, '成功')
+        json(res, files, '成功')
       } else {
         await poolextend('INSERT INTO file_hash(hash,url) VALUES(?,?)', [files.file.hash, files.file.path])
         json(res, files.file.path, '成功')

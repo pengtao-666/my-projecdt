@@ -6,5 +6,8 @@ const publics = require('../modules/public')
 router.get('/optimizeImg', (req, res, next) => {
   publics.optimizeImg(req, res, next)
 })
-
+// 上传文件
+router.post('/upload', (req, res, next) => {
+  publics.upload(req, res, next)
+})
 module.exports = router
