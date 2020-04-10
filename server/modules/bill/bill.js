@@ -39,7 +39,8 @@ const bill = {
   // 添加账单
   increase: async (req, res, next) => {
     let data = await poolextend('INSERT INTO bill_list SET ?', req.body)
-    if (data.sqlMessage) {
+    if (data.sqlMessage) { 
+	console.log(data.sqlMessage)
       json(res, data, '添加失败', 201)
     } else {
       json(res, '', '添加成功')
