@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-03-31 13:12:57
- * @LastEditTime: 2020-04-09 15:31:53
+ * @LastEditTime: 2020-04-10 21:07:26
  * @Description: 账单
  */
 // 连接池
@@ -27,7 +27,7 @@ const bill = {
   get_list: async (req, res, next) => {
     let dateRule = ` AND DATE_FORMAT(addTime,'%Y-%m') = '${req.query.addTime}'`
     let userRule = ` WHERE userId=${req.query.userId}`
-    let sql = `SELECT id,categoryId,remarks,number,type,DATE_FORMAT(addTime,'%Y-%m-%d') AS date FROM bill_list ${userRule}${dateRule}`
+    let sql = `SELECT id,categoryId,remarks,number,type,DATE_FORMAT(addTime,'%Y-%m-%d') AS date FROM bill_list ${userRule}${dateRule} OREDER BY addTime DESC`
     let sql1 = `SELECT SUM(number) AS consume FROM bill_list ${userRule}${dateRule} AND type=0  `
     let sql2 = `SELECT SUM(number) AS income FROM bill_list ${userRule}${dateRule} AND type=1`
     let [consume] = await poolextend(sql1)
@@ -39,9 +39,8 @@ const bill = {
   // 添加账单
   increase: async (req, res, next) => {
     let data = await poolextend('INSERT INTO bill_list SET ?', req.body)
-    if (data.sqlMessage) { 
-	console.log(data.sqlMessage)
-      json(res, data, '添加失败', 201)
+    if (data.sqlMessage) {
+      json(res, data.sqlMessage, '添加失败', 201)
     } else {
       json(res, '', '添加成功')
     }
