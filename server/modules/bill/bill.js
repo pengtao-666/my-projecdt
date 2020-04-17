@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-03-31 13:12:57
- * @LastEditTime: 2020-04-10 21:36:59
+ * @LastEditTime: 2020-04-14 17:12:39
  * @Description: 账单
  */
 // 连接池
@@ -9,31 +9,54 @@ const json = require('../../utils/json.js')
 const utils = require('../../utils/index.js')
 
 const bill = {
+  // 获取账单分类列表
+  get_category: async (req, res, next) => {
+    const sql = `SELECT * FROM bill_category WHERE userId=${req.query.userId} OR userId IS NULL`
+    try {
+      let data = await poolextend(sql)
+      json(res, data, '成功')
+    } catch (err) {
+      json(res, err, '失败', 201)
+    }
+  },
+  add_category: async (req, res, next) => {
+    const sql = `INSERT INTO bill_category SET ?`
+    poolextend(sql, req.body).then(data => {
+      if (data.sqlMessage) {
+        json(res, data.sqlMessage, '添加失败', 201)
+      } else {
+        json(res, '', '添加成功')
+      }
+    })
+  },
   // 获取账单统计
   get_statistics: async (req, res, next) => {
-    let sql = `SELECT SUM(number) AS consume FROM bill_list WHERE type=0 AND userId=${req.query.userId} AND DATE_FORMAT(addTime,'%Y-%m') = '${req.query.addTime}'`
-    let sql1 = `SELECT SUM(number) AS income FROM bill_list WHERE type=1 AND userId=${req.query.userId} AND DATE_FORMAT(addTime,'%Y-%m') = '${req.query.addTime}'`
+    const publicSql = `WHERE userId=${req.query.userId} AND DATE_FORMAT(addTime,'%Y-%m') = '${req.query.addTime}'`
+    const sql1 = `(SELECT SUM(number) FROM bill_list ${publicSql} AND type=0) AS consume`
+    const sql2 = `(SELECT SUM(number) FROM bill_list ${publicSql} AND type=1) AS income`
+    const sqlCont = `SELECT ${sql1},${sql2}`
     try {
-      let [data] = await poolextend(sql)
-      let [data1] = await poolextend(sql1)
-      if (!data.consume) data.consume = 0
-      if (!data1.income) data1.income = 0
-      json(res, { consume: data.consume, income: data1.income }, '成功')
+      let [data] = await poolextend(sqlCont)
+      json(res, data, '成功')
     } catch (err) {
       json(res, err, '失败', 201)
     }
   },
   // 获取账单列表
   get_list: async (req, res, next) => {
-    let dateRule = ` AND DATE_FORMAT(addTime,'%Y-%m') = '${req.query.addTime}'`
-    let userRule = ` WHERE userId=${req.query.userId}`
-    let sql = `SELECT id,categoryId,remarks,number,type,DATE_FORMAT(addTime,'%Y-%m-%d') AS date FROM bill_list ${userRule}${dateRule} ORDER BY date DESC`
-    let sql1 = `SELECT SUM(number) AS consume FROM bill_list ${userRule}${dateRule} AND type=0  `
-    let sql2 = `SELECT SUM(number) AS income FROM bill_list ${userRule}${dateRule} AND type=1`
-    let [consume] = await poolextend(sql1)
-    let [income] = await poolextend(sql2)
+    // 查询字段
+    const queryField = 'id,categoryId,remarks,number,type'
+    // 公共条件
+    let publicSql = `WHERE userId=${req.query.userId} AND DATE_FORMAT(addTime,'%Y-%m') = '${req.query.addTime}'`
+    // 统计
+    let sql1 = `(SELECT SUM(number) FROM bill_list ${publicSql} AND type=0) AS consume`
+    let sql2 = `(SELECT SUM(number) FROM bill_list ${publicSql} AND type=1) AS income`
+    let sqlunion = `SELECT  ${sql1},${sql2}`
+    let [amount] = await poolextend(sqlunion)
+    // 列表
+    let sql = `SELECT ${queryField},DATE_FORMAT(addTime,'%Y-%m-%d') AS date FROM bill_list ${publicSql} ORDER BY date DESC`
     poolextend(sql).then(data => {
-      json(res, { consume: consume.consume, income: income.income, list: data }, '成功')
+      json(res, { consume: amount.consume, income: amount.income, list: data }, '成功')
     })
   },
   // 添加账单

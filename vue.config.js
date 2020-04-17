@@ -18,8 +18,7 @@ const cdn = {
   js: [
     'https://cdn.bootcss.com/vue/2.6.10/vue.min.js',
     'https://cdn.bootcss.com/vuex/3.1.1/vuex.min.js',
-    'https://cdn.bootcss.com/vue-router/3.1.3/vue-router.min.js',
-    'https://unpkg.com/element-ui@2.13.0/lib/index.js'
+    'https://cdn.bootcss.com/vue-router/3.1.3/vue-router.min.js'
   ]
 }
 
