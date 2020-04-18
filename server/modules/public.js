@@ -2,8 +2,13 @@ var poolextend = require('../utils/poolextend')
 var json = require('../utils/json')
 const formidable = require('formidable')
 const fs = require('fs')
+
 const uploadcos = require('../utils/cos')
 var publicList = {
+  upload2: async (req, res, next) => {
+    let data = await uploadcos.putObj2(req.body)
+    json(res, data, '测试')
+  },
   // 上传图片
   upload: (req, res, next) => {
     var form = new formidable.IncomingForm()

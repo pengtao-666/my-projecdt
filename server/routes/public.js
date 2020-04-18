@@ -10,4 +10,8 @@ router.get('/optimizeImg', (req, res, next) => {
 router.post('/upload', (req, res, next) => {
   publics.upload(req, res, next)
 })
+// 上传文件
+router.post('/upload2', (req, res, next) => {
+  publics.upload2(req, res, next)
+})
 module.exports = router
