@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-03-31 13:12:57
- * @LastEditTime: 2020-04-14 17:12:39
+ * @LastEditTime: 2020-04-20 12:39:30
  * @Description: 账单
  */
 // 连接池
@@ -9,6 +9,55 @@ const json = require('../../utils/json.js')
 const utils = require('../../utils/index.js')
 
 const bill = {
+  // 删除账单
+  de_details: async (req, res, next) => {
+    if (!req.body.id) return json(res, null, '找不到id', 201)
+    const sql = `DELETE FROM bill_list WHERE id=${req.body.id}`
+    poolextend(sql).then(data => {
+      if (data.affectedRows && data.affectedRows > 1) {
+        json(res, null, '删除成功')
+      } else {
+        json(res, null, '删除失败', 201)
+      }
+    })
+  },
+  // 修改账单
+  up_details: async (req, res, next) => {
+    if (!req.body.id) return json(res, null, '找不到id', 201)
+    const sql = `UPDATE bill_list SET ? WHERE id=${req.body.id}`
+    poolextend(sql, req.body).then(data => {
+      if (data.changedRows) {
+        json(res, data, '修改成功')
+      } else {
+        json(res, null, '修改失败', 201)
+      }
+    })
+  },
+  // 获取账单详情
+  get_details: async (req, res, next) => {
+    if (!req.query.id) return json(res, null, '找不到id', 201)
+    const field = `id,DATE_FORMAT(addTime,'%Y-%m-%d') as addTime,categoryId,remarks,number,type`
+    const sql = `select ${field} from bill_list where id=${req.query.id}`
+    try {
+      poolextend(sql).then(data => {
+        json(res, { ...data[0] }, '成功')
+      })
+    } catch (err) {
+      json(res, err, '失败', 201)
+    }
+  },
+  // 获取账单分类统计
+  get_summary: async (req, res, next) => {
+    const sql = `SELECT ROUND(SUM(bi.number),2) as data,ca.name FROM bill_list as bi`
+    const sql1 = ` LEFT JOIN bill_category AS ca ON bi.categoryId=ca.id WHERE bi.userId=${req.query.userId} AND bi.type=${req.query.type} GROUP BY bi.categoryId`
+    try {
+      poolextend(sql + sql1).then(data => {
+        json(res, data, '成功')
+      })
+    } catch (err) {
+      json(req, err, '失败', 201)
+    }
+  },
   // 获取账单分类列表
   get_category: async (req, res, next) => {
     const sql = `SELECT * FROM bill_category WHERE userId=${req.query.userId} OR userId IS NULL`
@@ -19,6 +68,7 @@ const bill = {
       json(res, err, '失败', 201)
     }
   },
+  // 添加账单分类
   add_category: async (req, res, next) => {
     const sql = `INSERT INTO bill_category SET ?`
     poolextend(sql, req.body).then(data => {
