@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-03-31 13:12:57
- * @LastEditTime: 2020-04-23 15:22:47
+ * @LastEditTime: 2020-04-23 16:36:59
  * @Description: 账单
  */
 // 连接池
@@ -49,9 +49,10 @@ const bill = {
   // 获取账单分类排行
   get_ranking: async (req, res, next) => {
     let q = req.query
-    if (!q.categoryId) q.categoryId = 'null'
+    let cate = ''
+    if (q.categoryId) cate = ` AND categoryId=${q.categoryId} `
     const sql = `SELECT remarks,number,type,categoryId FROM bill_list `
-    const where = `WHERE userId=${q.userId} AND categoryId=${q.categoryId} or ${q.categoryId} is null AND type=${q.type} ORDER BY CAST(number AS DECIMAL) DESC `
+    const where = `WHERE userId=${q.userId} AND type=${q.type}${cate} ORDER BY CAST(number AS DECIMAL) DESC `
     poolextend(sql + where).then(data => {
       json(res, data, q.categoryId)
     })
