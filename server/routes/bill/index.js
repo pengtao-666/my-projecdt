@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-03-31 13:28:44
- * @LastEditTime: 2020-04-20 11:36:28
+ * @LastEditTime: 2020-04-23 14:47:09
  * @Description: 账单
  */
 // 引入express 模块
@@ -43,5 +43,9 @@ router.post('/add_category', (req, res, next) => {
 // 获取账单分类统计
 router.get('/get_summary', (req, res, next) => {
   bill.get_summary(req, res, next)
+})
+// 获取账单分类排行
+router.get('/get_ranking', (req, res, next) => {
+  bill.get_ranking(req, res, next)
 })
 module.exports = router

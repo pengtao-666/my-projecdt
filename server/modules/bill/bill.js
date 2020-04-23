@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-03-31 13:12:57
- * @LastEditTime: 2020-04-20 12:39:30
+ * @LastEditTime: 2020-04-23 15:22:47
  * @Description: 账单
  */
 // 连接池
@@ -46,12 +46,23 @@ const bill = {
       json(res, err, '失败', 201)
     }
   },
+  // 获取账单分类排行
+  get_ranking: async (req, res, next) => {
+    let q = req.query
+    if (!q.categoryId) q.categoryId = 'null'
+    const sql = `SELECT remarks,number,type,categoryId FROM bill_list `
+    const where = `WHERE userId=${q.userId} AND categoryId=${q.categoryId} or ${q.categoryId} is null AND type=${q.type} ORDER BY CAST(number AS DECIMAL) DESC `
+    poolextend(sql + where).then(data => {
+      json(res, data, q.categoryId)
+    })
+  },
   // 获取账单分类统计
   get_summary: async (req, res, next) => {
     const sql = `SELECT ROUND(SUM(bi.number),2) as data,ca.name FROM bill_list as bi`
-    const sql1 = ` LEFT JOIN bill_category AS ca ON bi.categoryId=ca.id WHERE bi.userId=${req.query.userId} AND bi.type=${req.query.type} GROUP BY bi.categoryId`
+    const sql1 = ` LEFT JOIN bill_category AS ca ON bi.categoryId=ca.id `
+    const where = `WHERE bi.userId=${req.query.userId} AND bi.type=${req.query.type} GROUP BY bi.categoryId`
     try {
-      poolextend(sql + sql1).then(data => {
+      poolextend(sql + sql1 + where).then(data => {
         json(res, data, '成功')
       })
     } catch (err) {
