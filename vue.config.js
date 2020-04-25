@@ -11,10 +11,8 @@ const cdn = {
   externals: {
     vue: 'Vue',
     vuex: 'Vuex',
-    'vue-router': 'VueRouter',
-    'element-ui': 'ELEMENT'
+    'vue-router': 'VueRouter'
   },
-  css: ['https://unpkg.com/element-ui/lib/theme-chalk/index.css'],
   js: [
     'https://cdn.bootcss.com/vue/2.6.10/vue.min.js',
     'https://cdn.bootcss.com/vuex/3.1.1/vuex.min.js',
