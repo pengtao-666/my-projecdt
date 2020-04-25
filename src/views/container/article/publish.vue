@@ -1,6 +1,6 @@
 <!--
  * @Date: 2019-12-05 11:53:02
- * @LastEditTime: 2020-03-24 15:18:05
+ * @LastEditTime: 2020-04-25 14:57:11
  * @Description: 发布文章
  -->
 <template>
@@ -49,7 +49,7 @@
 import quillEditor from '@/components/quilleditor'
 import { getCategory, addSubclass, addArtcle } from '@/api/article'
 import { parseTime } from '@/utils/date'
-import baseUrl from '../../../baseUrl'
+import baseUrl from '@/baseUrl'
 export default {
   components: {
     quillEditor
@@ -66,8 +66,7 @@ export default {
         author: JSON.parse(sessionStorage.getItem('userInfo')).userName,
         createDate: parseTime(new Date(), '{y}-{m}-{d} {h}:{i}')
       },
-      // serverUrl: `${baseUrl}article/upload`,
-      serverUrl: `http://118.24.125.76/api/article/upload`,
+      serverUrl: `${baseUrl}public/upload`,
       // 一级分类列表
       category: [],
       // 二级分类列表
@@ -81,12 +80,7 @@ export default {
   },
   methods: {
     handleAvatarSuccess (res, file) {
-      this.submitQuery.src = `http://118.24.125.76:3000/${res.data}`
-      // if (process.env.NODE_ENV === 'production') {
-      //   this.submitQuery.src = `http://118.24.125.76:3000/${res.data}`
-      // } else {
-      //   this.submitQuery.src = `http://localhost:3000/${res.data}`
-      // }
+      this.submitQuery.src = `${res.data}`
     },
     beforeAvatarUpload (file) {
       const isJPG = /^image\/(jpeg|png|jpg)$/.test(file.type)

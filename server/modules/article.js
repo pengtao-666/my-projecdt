@@ -30,6 +30,7 @@ var apiArtcle = {
       json(res, err.sqlMessage, '错误')
     }
   },
+  // 废弃
   upload: async (req, res, next) => {
     var form = new formidable.IncomingForm()
     var uploadDir = 'public/fileUpload/'
@@ -44,8 +45,8 @@ var apiArtcle = {
         fs.unlink(files.file.path, err => {
           if (err) console.log('失败')
         })
-        // json(res, fileStatus.url, '成功')
-        json(res, files, '成功')
+        json(res, fileStatus.url, '成功')
+        // json(res, files, '成功')
       } else {
         await poolextend('INSERT INTO file_hash(hash,url) VALUES(?,?)', [files.file.hash, files.file.path])
         json(res, files.file.path, '成功')

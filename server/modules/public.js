@@ -19,8 +19,19 @@ var publicList = {
     form.hash = 'md5'
     form.parse(req, async (err, queryData, files) => {
       if (err) return json(res, err, '失败')
-      let data = await uploadcos.putObj(queryData, files)
-      json(res, data, '测试')
+      // 查询 文件hash是否存在
+      let [fileStatus] = await poolextend('SELECT url FROM file_hash WHERE hash=?', [files.file.hash])
+      if (fileStatus) {
+        fs.unlink(files.file.path, err => {
+          if (err) console.log('失败')
+        })
+        json(res, 'https://' + fileStatus.url, '成功')
+      } else {
+        let data = await uploadcos.putObj(queryData, files)
+        await poolextend('INSERT INTO file_hash(hash,url) VALUES(?,?)', [files.file.hash, data.Location])
+        console.log(data)
+        json(res, 'https://' + data.Location, '成功')
+      }
     })
   },
   // 检测图片资源

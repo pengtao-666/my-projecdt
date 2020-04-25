@@ -64,7 +64,7 @@ export default {
         subclassId: '',
         src: ''
       },
-      serverUrl: `${baseUrl}article/upload`,
+      serverUrl: `${baseUrl}public/upload`,
       // 一级分类列表
       category: [],
       // 二级分类列表
@@ -85,11 +85,7 @@ export default {
       })
     },
     handleAvatarSuccess (res, file) {
-      if (process.env.NODE_ENV === 'production') {
-        this.submitQuery.src = `http://118.24.125.76:3000/${res.data}`
-      } else {
-        this.submitQuery.src = `http://localhost:3000/${res.data}`
-      }
+      this.submitQuery.src = res.data
     },
     beforeAvatarUpload (file) {
       const isJPG = file.type === 'image/jpeg'

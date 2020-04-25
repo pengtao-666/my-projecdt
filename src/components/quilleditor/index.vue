@@ -37,8 +37,7 @@ const toolbarOptions = [
   [{ list: 'ordered' }, { list: 'bullet' }], // 有序、无序列表
   [{ script: 'sub' }, { script: 'super' }], // 上标/下标
   [{ indent: '-1' }, { indent: '+1' }], // 缩进
-  // [{ size: ['small', false, 'large', 'huge'] }], // 字体大小
-  [{ size: ['10px', '12px', '14px', '16px', '18px', '20px'] }],
+  [{ size: ['12px', '14px', '16px', '18px', '20px', '28px', '36px', '42px'] }], // 字体大小
   [{ header: [1, 2, 3, 4, 5, 6, false] }], // 标题
   [{ color: [] }, { background: [] }], // 字体颜色、字体背景颜色
   [{ font: [] }], // 字体种类
@@ -81,9 +80,7 @@ export default {
           imageResize: {}
         }
       },
-      // serverUrl: `${baseUrl}article/upload`, // 上传的图片服务器地址
-      serverUrl: `http://118.24.125.76/api/article/upload`,
-      imageBaseUrl: `http://118.24.125.76:3000/`
+      serverUrl: `${baseUrl}public/upload` // 上传的图片服务器地址
     }
   },
   mounted () {
@@ -106,9 +103,6 @@ export default {
       this.quillUpdateImg = true
     },
     uploadSuccess (res, file) {
-      if (process.env.NODE_ENV === 'production') {
-        this.imageBaseUrl = `http://118.24.125.76:3000/`
-      }
       // res为图片服务器返回的数据
       // 获取富文本组件实例
       let quill = this.$refs.myQuillEditor.quill
@@ -118,7 +112,7 @@ export default {
         // 获取光标所在位置
         let length = quill.getSelection().index
         // 插入图片  res.url为服务器返回的图片地址，需要拼接图片服务根地址
-        quill.insertEmbed(length, 'image', this.imageBaseUrl + res.data)
+        quill.insertEmbed(length, 'image', res.data)
         // 调整光标到最后
         quill.setSelection(length + 1)
       } else {
