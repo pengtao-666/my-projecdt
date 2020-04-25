@@ -24,8 +24,12 @@ function resolve (dir) {
   return path.join(__dirname, dir)
 }
 module.exports = {
-  publicPath: './',
+  publicPath: '/',
   outputDir: './server/public/dist',
+  assetsDir: 'public',
+  css: {
+    extract: true
+  },
   productionSourceMap: false,
   chainWebpack: (config) => {
     config.module
@@ -84,25 +88,26 @@ module.exports = {
       )
       // 公共代码抽离
       config.optimization = {
+        minimize: true,
         splitChunks: {
           cacheGroups: {
+            default: false,
             vendor: {
-              chunks: 'all',
-              test: /node_modules/,
+              chunks: 'async',
+              test: /[\\/]node_modules[\\/]/,
               name: 'vendor',
               minChunks: 1,
               maxInitialRequests: 5,
               minSize: 0,
-              priority: 100
+              priority: 99
             },
-            common: {
+            vendor1: {
               chunks: 'all',
-              test: /[\\/]src[\\/]js[\\/]/,
-              name: 'common',
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendor1',
               minChunks: 2,
-              maxInitialRequests: 5,
               minSize: 0,
-              priority: 60
+              priority: 100
             },
             styles: {
               name: 'styles',
@@ -110,8 +115,9 @@ module.exports = {
               chunks: 'all',
               enforce: true
             },
-            runtimeChunk: {
-              name: 'manifest'
+            common: {
+              name: 'common',
+              priority: 20
             }
           }
         }
