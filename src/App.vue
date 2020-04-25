@@ -9,6 +9,9 @@
   padding: 0;
   box-sizing: border-box;
 }
+#app{
+  min-width: 1200px;
+}
 .templateCont{
   height: 100%;
   padding: 20px;
