@@ -1,6 +1,9 @@
 .DS_Store
 node_modules
 /dist
+build.sh
+server.sh
+server.zip
 server/app.js
 server/public/fileUpload
 server/utils/cos.js

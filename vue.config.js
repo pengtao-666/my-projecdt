@@ -25,7 +25,8 @@ function resolve (dir) {
 }
 module.exports = {
   publicPath: '/',
-  outputDir: './server/public/dist',
+  // outputDir: './server/public/dist',
+  outputDir: 'dist',
   assetsDir: 'public',
   css: {
     extract: true
@@ -47,6 +48,7 @@ module.exports = {
       .set('com', resolve('./src/components'))
       .end()
     config.plugin('html').tap(args => {
+      args.title = '个人测试网站'
       if (isProduction || devNeedCdn) args[0].cdn = cdn
       return args
     })

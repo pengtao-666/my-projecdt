@@ -8,6 +8,7 @@ const routes = [
   {
     path: '/',
     component: r => require.ensure([], () => r(require('../views/index.vue'))),
+    meta: { title: '个人网站测试', description: '个人网站测试' },
     children: [
       {
         path: '/',

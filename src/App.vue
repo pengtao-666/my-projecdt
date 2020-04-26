@@ -3,6 +3,13 @@
     <router-view />
   </div>
 </template>
+<script>
+export default {
+  created () {
+    document.title = '个人测试网站'
+  }
+}
+</script>
 <style lang="scss">
 * {
   margin: 0;
