@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-03-31 13:28:44
- * @LastEditTime: 2020-04-23 14:47:09
+ * @LastEditTime: 2020-05-29 17:18:06
  * @Description: 账单
  */
 // 引入express 模块
@@ -39,6 +39,10 @@ router.get('/get_category', (req, res, next) => {
 // 添加账单分类列表
 router.post('/add_category', (req, res, next) => {
   bill.add_category(req, res, next)
+})
+// 删除账单分类列表
+router.post('/del_category', (req, res, next) => {
+  bill.del_category(req, res, next)
 })
 // 获取账单分类统计
 router.get('/get_summary', (req, res, next) => {

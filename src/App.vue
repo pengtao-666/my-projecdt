@@ -6,7 +6,7 @@
 <script>
 export default {
   created () {
-    document.title = '个人测试网站'
+    // document.title = '个人测试网站'
   }
 }
 </script>

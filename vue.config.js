@@ -28,6 +28,7 @@ module.exports = {
   // outputDir: './server/public/dist',
   outputDir: 'dist',
   assetsDir: 'public',
+  // title: '标题',
   css: {
     extract: true
   },
@@ -48,7 +49,6 @@ module.exports = {
       .set('com', resolve('./src/components'))
       .end()
     config.plugin('html').tap(args => {
-      args.title = '个人测试网站'
       if (isProduction || devNeedCdn) args[0].cdn = cdn
       return args
     })

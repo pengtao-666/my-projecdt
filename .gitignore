@@ -7,6 +7,7 @@ server.zip
 server/app.js
 server/public/fileUpload
 server/utils/cos.js
+server/db/db.js
 # local env files
 .env.local
 .env.*.local
