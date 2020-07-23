@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-03-31 13:12:57
- * @LastEditTime: 2020-07-16 17:28:02
+ * @LastEditTime: 2020-07-16 18:04:11
  * @Description: 账单
  */
 // 连接池
@@ -53,7 +53,6 @@ const bill = {
     if (q.categoryId !== 'null') where += ` AND categoryId=${q.categoryId}`
     const sort = ' ORDER BY number DESC'
     const limit = ` LIMIT ${(q.page - 1) * q.pageSize},${q.pageSize}`
-    console.log(where)
     poolextend(sql1 + where + sort + limit)
       .then(data => {
         json(res, data, '成功')

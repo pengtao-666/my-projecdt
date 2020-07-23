@@ -9,20 +9,20 @@ const SECRET = 'token_secret'
 var userData = {
   // 注册
   register: async (req, res, next) => {
-    let query = await utils.format(req)
-    // let uid = jwt.sign(new Date().getTime(), SECRET)
-    let uid = new Date().getTime()
-    if (!query.userName) {
-      return json(res, null, '账号不能为空', 201)
+    let q = req.body
+    if (!q.userName || !q.password) {
+      return json(res, null, '账号密码不能为空', 201)
     }
-    let [userInfo] = await poolextend('SELECT userName FROM userList WHERE userName=?', [query.userName])
+    let [userInfo] = await poolextend('SELECT userName FROM userList WHERE userName=?', [q.userName])
     if (userInfo) {
       json(res, null, '账号重复', 201)
     } else {
+      let uid = await testing()
       let sql = 'INSERT INTO userList(userName,name,password,uid) VALUES(?,?,?,?)'
-      poolextend(sql, [query.userName, query.name, query.password, uid])
+      q.name = q.name ? q.name : q.userName.length > 4 ? `用户${q.userName.substr(-4)}` : q.userName
+      poolextend(sql, [q.userName, q.name, q.password, uid])
         .then(result => {
-          json(res, {}, '成功')
+          json(res, {}, '注册成功')
         })
         .catch(err => {
           json(res, err, '注册失败')
@@ -31,11 +31,10 @@ var userData = {
   },
   // 登录
   login: async (req, res, next) => {
-    let query = await utils.format(req)
-    let sql = 'SELECT userName,status,password,uid FROM userList WHERE userName=? AND password=?'
-    let sqlArr = [query.userName, query.password]
+    let q = req.body
+    let sql = `SELECT userName,status,uid,name,avatarUrl,gender FROM userList WHERE userName=${q.userName} AND password=${q.password}`
     try {
-      let [data] = await poolextend(sql, sqlArr)
+      let [data] = await poolextend(sql)
       if (!data) return json(res, null, '登录名或密码错误', 201)
       json(res, data, '登录成功')
     } catch (err) {
@@ -44,16 +43,16 @@ var userData = {
   },
   // 更改
   updateUser: async (req, res, next) => {
-    let query = await utils.format(req)
+    let q = req.body
     let sql = ''
     let arr = []
-    if (query.password) {
-      if (query.password === '') return json(res, {}, '密码不能为空', 201)
+    if (q.password) {
+      if (q.password === '') return json(res, {}, '密码不能为空', 201)
       sql = 'UPDATE userList SET name=?,password=? WHERE id=? AND password=?'
-      arr = [query.name, query.password, query.id, query.oldPassword]
+      arr = [q.name, q.password, q.id, q.oldPassword]
     } else {
       sql = 'UPDATE userList SET name=? WHERE id=?'
-      arr = [query.name, query.id]
+      arr = [q.name, q.id]
     }
     try {
       const data = await poolextend(sql, arr)
@@ -93,5 +92,17 @@ var userData = {
       json(res, null, '成功')
     } catch (err) { json(res, err, '删除失败') }
   }
+}
+function testing () {
+  return new Promise((resolve, reject) => {
+    let uid = utils.randomId()
+    poolextend(`select uid from userList where uid=${uid}`).then(data => {
+      if (data.length > 0) {
+        testing()
+      } else {
+        resolve(uid)
+      }
+    })
+  })
 }
 module.exports = userData

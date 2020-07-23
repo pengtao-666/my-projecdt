@@ -2,8 +2,7 @@ const express = require('express')
 const router = express.Router()
 const user = require('../modules/user')
 const utils = require('../utils/index')
-// 账单
-router.use('/bill', (req, res, next) => {
+router.use('/', (req, res, next) => {
   req = utils.format2(req)
   next()
 })
